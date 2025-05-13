@@ -18,6 +18,7 @@ return new class extends Migration
             $table->boolean('isOpened')->default(false);
             $table->dateTime('notification_date');
             $table->integer('user_id');
+            $table->string('deleted_at');
         });
     }
 
