@@ -22,6 +22,12 @@ class User extends Model{
         return $this->hasOne(JobSeeker::class);
     }
 
+    public function Employer()
+    {
+        return $this->hasOne(Employer::class);
+    }
+
+
     public function favoriteJob() : BelongsToMany{
         return $this->belongsToMany(Job::class, 'user_favorite_jobs' ,'job_id ','role_id')
             ->using(UserFavoriteJobs::class);
