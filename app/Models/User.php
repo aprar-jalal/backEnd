@@ -17,6 +17,10 @@ class User extends Model{
         'location',
         'password_reset_token',
     ];
+    public function jobSeeker()
+    {
+        return $this->hasOne(JobSeeker::class);
+    }
 
     public function favoriteJob() : BelongsToMany{
         return $this->belongsToMany(Job::class, 'user_favorite_jobs' ,'job_id ','role_id')

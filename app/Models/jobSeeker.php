@@ -8,6 +8,7 @@ class jobSeeker extends Model
 {
     protected $fillable = [
         'id',
+        'user_id',
         'first_name',
         'last_name',
         'picture',
@@ -19,4 +20,10 @@ class jobSeeker extends Model
         'degree',
         'years_of_experience',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }
