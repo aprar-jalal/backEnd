@@ -1,16 +1,15 @@
 <?php
+
 use App\Http\Controllers\JobSeekerController;
 use App\Models\UserApplicationJob;
 use App\Models\UserFavoriteJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\EmployerController;
-use App\Http\Controllers\JobController;
-
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
 
 
 
@@ -25,6 +24,7 @@ Route::post('jobs', [JobController::class, 'store']);
 Route::put('jobs/{id}', [JobController::class, 'update']);
 Route::get('jobs/{id}', [JobController::class, 'show']);
 Route::delete('jobs/{id}', [JobController::class, 'destroy']);
+
 
 Route::post('user/{user_id}/job',[UserFavoriteJob::class,'store']);
 Route::delete('user/{user_id}/job',[UserFavoriteJob::class,'destroy']);
@@ -44,4 +44,3 @@ Route::get('/jobseeker/favorite-jobs', [JobSeekerController::class, 'getFavorite
 Route::post('/jobseeker/upload-resume', [JobSeekerController::class, 'uploadResume']);
 Route::post('/jobseeker/upload-picture', [JobSeekerController::class, 'uploadProfilePicture']);
 Route::post('/jobseeker/change-password', [JobSeekerController::class, 'changePassword']);
-

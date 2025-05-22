@@ -16,7 +16,7 @@ class UserApplicationJobController extends Controller
         $user->AppliedJobs()->syncWithoutDetaching([$request->JobId=> ['applicationStatus' => true]]);
         return response()->json([
             'job_id' =>$request->JobId
-        ]);
+        ],200);
 
     }
 
@@ -28,7 +28,7 @@ class UserApplicationJobController extends Controller
         Auth::user()->AppliedJobs()->syncWithoutDetaching([$JobId=> ['applicationStatus' => true]]);
         return response()->json([
             'job_id' =>$JobId
-        ]);
+        ],200);
 
     }
 
