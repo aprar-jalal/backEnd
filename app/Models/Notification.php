@@ -20,7 +20,7 @@ class Notification extends Model
         'message',
         'isOpened',
         'notificationDate',
-        'userId',
+        'user_id',
         'deleted_at',
     ];
 public function User (){
