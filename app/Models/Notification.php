@@ -22,6 +22,7 @@ class Notification extends Authenticatable
         'userId',
         'deleted_at',
     ];
-
-
+public function User (){
+    return $this->belongsTo(User::class);
+}
 }
