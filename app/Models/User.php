@@ -17,10 +17,16 @@ class User extends Model{
         'location',
         'password_reset_token',
     ];
-    public function jobSeeker()
+
+    public static function factory()
     {
-        return $this->hasOne(JobSeeker::class);
     }
+
+    public function jobSeeker(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(JobSeeker::class, 'role_id', 'role_id');
+    }
+
 
     public function Employer()
     {
