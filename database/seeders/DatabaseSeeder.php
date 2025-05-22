@@ -17,9 +17,6 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
         Job::factory()->count(5)->create();
-//        User::factory()->create([
-//            'name' => 'Test User',
-//            'email' => 'test@example.com',
-//        ]);
+        $this->call(JobSeekerSeeder::class);
     }
 }

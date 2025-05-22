@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id('role_id');
             $table->string('email')->unique();
             $table->string('password');
-            $table->enum('gender', ['male', 'female'])->nullable();
+            $table->enum('gender', ['male', 'female']);
             $table->string('password_reset_token')->nullable();
-            $table->string('phone')->nullable();
+            $table->string('phone');
             $table->string('location')->nullable();
             $table->timestamps();
         });

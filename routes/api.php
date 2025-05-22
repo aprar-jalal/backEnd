@@ -1,13 +1,17 @@
 <?php
 
+use App\Models\UserApplicationJob;
+use App\Models\UserFavoriteJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmployerController;
 use App\Http\Controllers\JobController;
 
+
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
 
 
 Route::get('employers', [EmployerController::class, 'index']);
@@ -21,3 +25,15 @@ Route::post('jobs', [JobController::class, 'store']);
 Route::put('jobs/{id}', [JobController::class, 'update']);
 Route::get('jobs/{id}', [JobController::class, 'show']);
 Route::delete('jobs/{id}', [JobController::class, 'destroy']);
+=======
+Route::post('user/{user_id}/job',[UserFavoriteJob::class,'store']);
+Route::delete('user/{user_id}/job',[UserFavoriteJob::class,'destroy']);
+
+Route::post('user/{user_id}/job',[UserApplicationJob::class,'store']);
+
+Route::post('/login', [UserController::class, 'manualLogin']);
+Route::get('/check-auth', [UserController::class, 'checkout']);
+Route::get('/current-user', [UserController::class, 'currentUser']);
+Route::post('/logout', [UserController::class, 'logout']);
+
+
