@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable {
+
+class User extends Model{
     protected $fillable = [
 
         'role_id',
@@ -17,23 +17,16 @@ class User extends Authenticatable {
         'location',
         'password_reset_token',
     ];
+    public function jobSeeker()
+    {
+        return $this->hasOne(JobSeeker::class);
+    }
 
-
-  function employer()
+    public function Employer()
     {
         return $this->hasOne(Employer::class);
     }
 
-      
-    public static function factory()
-
-    {
-    }
-
-    public function jobSeeker(): \Illuminate\Database\Eloquent\Relations\HasOne
-    {
-        return $this->hasOne(JobSeeker::class, 'role_id', 'role_id');
-    }
 
     public function favoriteJob() : BelongsToMany{
         return $this->belongsToMany(Job::class, 'user_favorite_jobs' ,'job_id ','role_id')
