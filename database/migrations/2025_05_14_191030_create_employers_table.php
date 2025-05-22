@@ -16,7 +16,7 @@ return new class extends Migration
 
 
             $table->id();
-            $table->Integer('role_id')->unique();
+            $table->unsignedBigInteger('role_id')->unique();
             $table->foreign('role_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('company_name');
             $table->text('description')->nullable();
