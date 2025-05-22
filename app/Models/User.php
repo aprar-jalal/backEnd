@@ -18,7 +18,15 @@ class User extends Model{
         'password_reset_token',
     ];
 
+
+  function employer()
+    {
+        return $this->hasOne(Employer::class);
+    }
+
+      
     public static function factory()
+
     {
     }
 
@@ -26,13 +34,6 @@ class User extends Model{
     {
         return $this->hasOne(JobSeeker::class, 'role_id', 'role_id');
     }
-
-
-    public function Employer()
-    {
-        return $this->hasOne(Employer::class);
-    }
-
 
     public function favoriteJob() : BelongsToMany{
         return $this->belongsToMany(Job::class, 'user_favorite_jobs' ,'job_id ','role_id')
