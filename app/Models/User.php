@@ -18,6 +18,22 @@ class User extends Model{
         'password_reset_token',
     ];
 
+    public static function factory()
+    {
+    }
+
+    public function jobSeeker(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(JobSeeker::class, 'role_id', 'role_id');
+    }
+
+
+    public function Employer()
+    {
+        return $this->hasOne(Employer::class);
+    }
+
+
     public function favoriteJob() : BelongsToMany{
         return $this->belongsToMany(Job::class, 'user_favorite_jobs' ,'job_id ','role_id')
             ->using(UserFavoriteJobs::class);

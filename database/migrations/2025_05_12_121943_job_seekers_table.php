@@ -12,12 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('job_seekers', function (Blueprint $table) {
-            $table->id('job_seeker_id')->unique();
+            $table->id('job_seeker_id');
+            $table->unsignedBigInteger('role_id')->unique();
+            $table->foreign('role_id')->references('role_id')->on('users')->onDelete('cascade');
             $table->string('first_name');
             $table->string('last_name');
             $table->string('picture')->nullable();
             $table->string('major')->nullable();
-            $table->text('background')->nullable();
+            $table->string('background_image')->nullable();
             $table->text('resume')->nullable();
             $table->text('profile_description')->nullable();
             $table->json('skills')->nullable();

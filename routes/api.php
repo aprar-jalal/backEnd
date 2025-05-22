@@ -1,5 +1,6 @@
 <?php
 
+
 use App\Models\UserApplicationJob;
 use App\Models\UserFavoriteJob;
 use Illuminate\Http\Request;
@@ -13,3 +14,9 @@ Route::post('user/{user_id}/job',[UserFavoriteJob::class,'store']);
 Route::delete('user/{user_id}/job',[UserFavoriteJob::class,'destroy']);
 
 Route::post('user/{user_id}/job',[UserApplicationJob::class,'store']);
+
+Route::post('/login', [UserController::class, 'manualLogin']);
+Route::get('/check-auth', [UserController::class, 'checkout']);
+Route::get('/current-user', [UserController::class, 'currentUser']);
+Route::post('/logout', [UserController::class, 'logout']);
+
