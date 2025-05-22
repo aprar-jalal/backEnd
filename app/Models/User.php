@@ -17,6 +17,12 @@ class User extends Model{
         'location',
         'password_reset_token',
     ];
+
+    function employer()
+    {
+        return $this->hasOne(Employer::class);
+    }
+
     public function jobSeeker()
     {
         return $this->hasOne(JobSeeker::class);
