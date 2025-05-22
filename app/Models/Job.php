@@ -2,14 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Job extends Model
+use \Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Notifications\Notifiable;
+
+
+class Job extends Authenticatable
 {
 
+    use HasFactory, Notifiable;
+
+
+    protected $primaryKey = 'job_id';
 
     protected $fillable = [
+        'employer_id',
         'job_id',
         'job_title',
         'description',
@@ -18,6 +27,12 @@ class Job extends Model
         'job_type',
         'availability',
         ];
+
+
+    function employer()
+    {
+        return $this->belongsTo(Employer::class, 'employer_id');
+    }
 
     public function favoriteBy() : BelongsToMany {
         return $this->belongsToMany(User::class, 'user_favorite_jobs' ,'job_id ','role_id')->
