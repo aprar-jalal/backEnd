@@ -17,4 +17,10 @@ class Employer extends Model
         'company_size',
         'verified',
     ];
+
+
+    public function User()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
