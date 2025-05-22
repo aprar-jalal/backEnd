@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Controllers\UserController;
 use App\Models\UserApplicationJob;
 use App\Models\UserFavoriteJobs;
 use Illuminate\Http\Request;
