@@ -4,16 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class jobSeeker extends Model
+class JobSeeker extends Model
 {
     protected $fillable = [
-        'id',
-        'user_id',
+        'role_id',
         'first_name',
         'last_name',
         'picture',
         'major',
-        'background',
+        'background_image',
         'resume',
         'profile_description',
         'skills',
@@ -21,9 +20,9 @@ class jobSeeker extends Model
         'years_of_experience',
     ];
 
-    public function user()
+    public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'role_id', 'role_id');
     }
-
 }
+

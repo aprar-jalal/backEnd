@@ -7,3 +7,4 @@ Route::post('/login', [UserController::class, 'manualLogin']);
 Route::get('/check-auth', [UserController::class, 'checkout']);
 Route::get('/current-user', [UserController::class, 'currentUser']);
 Route::post('/logout', [UserController::class, 'logout']);
+Route::get('/notifications/{userId}','App\Models\NotificationController@index');
