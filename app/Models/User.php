@@ -17,10 +17,11 @@ class User extends Model{
         'location',
         'password_reset_token',
     ];
-    public function jobSeeker()
+    public function jobSeeker(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
-        return $this->hasOne(JobSeeker::class);
+        return $this->hasOne(JobSeeker::class, 'user_id', 'user_id'); //foreign ->jobseeker , local->user
     }
+
 
     public function Employer()
     {
