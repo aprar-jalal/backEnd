@@ -40,4 +40,8 @@ class User extends Model{
             ->withPivot('applicationStatus')
             ->withTimestamps();
     }
+
+    public function Notification(){
+        return $this->hasMany(Notification::class);
+    }
 }
