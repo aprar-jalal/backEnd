@@ -2,9 +2,12 @@
 
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
-Route::post('/login', [UserController::class, 'manualLogin']);
-Route::get('/check-auth', [UserController::class, 'checkout']);
-Route::get('/current-user', [UserController::class, 'currentUser']);
-Route::post('/logout', [UserController::class, 'logout']);
-Route::get('/notifications/{userId}','App\Models\NotificationController@index');
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
+
+Route::post('signUp',[UserController::class, 'signUp']);
+Route::post('logIn',[UserController::class, 'logIn']);
+Route::middleware('auth:sanctum')->post('/logOut', [UserController::class, 'logOut']);

@@ -15,8 +15,7 @@ return new class extends Migration
 
             $table->Id('user_id');
             $table->integer('role_id');
-
-
+            $table->foreignId('role_id')->constrained('roles')->onDelete('cascade');
             $table->string('email')->unique();
             $table->string('password');
             $table->enum('gender', ['male', 'female']);
