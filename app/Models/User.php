@@ -21,10 +21,12 @@ class User extends Authenticatable{
         'password_reset_token',
     ];
 
-    public function jobSeeker()
+    public function jobSeeker(): \Illuminate\Database\Eloquent\Relations\HasOne
+
     {
-        return $this->hasOne(JobSeeker::class);
+        return $this->hasOne(JobSeeker::class, 'user_id', 'user_id'); //foreign ->jobseeker , local->user
     }
+
 
     public function Employer()
     {
@@ -44,8 +46,13 @@ class User extends Authenticatable{
             ->withTimestamps();
     }
 
+
     public function role()
     {
         return $this->belongsTo(Role::class);
+
+    public function Notification(){
+        return $this->hasMany(Notification::class);
+
     }
 }

@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class JobSeeker extends Model
 {
+    use HasFactory;
+
+    protected $primaryKey = 'job_seeker_id';
     protected $fillable = [
-        'role_id',
+        'user_id',
         'first_name',
         'last_name',
         'picture',
@@ -22,7 +26,7 @@ class JobSeeker extends Model
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(User::class, 'role_id', 'role_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
 
