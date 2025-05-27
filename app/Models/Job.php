@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use \Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
@@ -16,7 +17,9 @@ class Job extends Authenticatable
 
 
     protected $primaryKey = 'job_id';
-
+    protected $casts = [
+        'job_full_disc' => 'array',
+    ];
     protected $fillable = [
         'employer_id',
         'job_id',
@@ -26,7 +29,8 @@ class Job extends Authenticatable
         'salary',
         'job_type',
         'availability',
-        ];
+        'job_full_disc',
+    ];
 
 
     function employer()
@@ -35,15 +39,12 @@ class Job extends Authenticatable
     }
 
     public function favoriteBy() : BelongsToMany {
-        return $this->belongsToMany(User::class, 'user_favorite_jobs' ,'job_id ','role_id')->
+        return $this->belongsToMany(User::class, 'user_favorite_jobs' ,'job_id ','user_id')->
             using(UserFavoriteJobs::class);
     }
 
-    public function applications() : BelongsToMany {
-        return $this->belongsToMany(User::class,'user_application_job','role_id','job_id')
-            ->using(UserApplicationJob::class)
-            ->withPivot('applicationStatus')
-            ->withTimestamps();
+    public function applications() : HasMany {
+        return $this->hasMany(UserApplicationJob::class);
     }
 
 }
