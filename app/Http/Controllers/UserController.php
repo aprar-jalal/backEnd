@@ -42,24 +42,22 @@ class UserController extends Controller
             'password' => 'required|string',
         ]);
 
-
         if (!Auth::attempt($request->only('email', 'password'))) {
             return response()->json([
                 'message' => 'Email or password is wrong.',
             ], 401);
         }
 
-
         $user = Auth::user();
+
         $token = $user->createToken('authToken')->plainTextToken;
 
         return response()->json([
             'message' => 'User login successfully.',
             'User' => $user,
             'Token' => $token
-        ], 201);
+        ], 200);
     }
-
 
     public function logOut(Request $request)
     {
