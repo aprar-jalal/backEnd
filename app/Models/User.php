@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable {
-    protected $fillable = [
+    protected $primaryKey = 'user_id';
 
-        'role_id',
+    protected $fillable = [
         'email',
         'password',
         'gender',
@@ -24,9 +25,8 @@ class User extends Authenticatable {
         return $this->hasOne(Employer::class);
     }
 
-      
-    public static function factory()
 
+    public static function factory()
     {
     }
 
@@ -36,14 +36,11 @@ class User extends Authenticatable {
     }
 
     public function favoriteJob() : BelongsToMany{
-        return $this->belongsToMany(Job::class, 'user_favorite_jobs' ,'job_id ','role_id')
+        return $this->belongsToMany(Job::class, 'user_favorite_jobs' ,'user_id','job_id')
             ->using(UserFavoriteJobs::class);
     }
 
-    public Function AppliedJobs() : BelongsToMany{
-        return $this->belongsToMany(Job::class, 'user_application_job' ,'job_id ','role_id')
-            ->using(UserApplicationJob::class)
-            ->withPivot('applicationStatus')
-            ->withTimestamps();
+    public Function AppliedJobs() : HasMany {
+        return $this->hasMany(UserApplicationJob::class);
     }
 }

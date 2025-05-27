@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('user_application_job', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('role_id')->constrained('users');
+            $table->foreignId('user_id')->constrained('users');
             $table->foreignId('job_id')->constrained('jobs');
-            $table->boolean('applicationStatus')->default(0);
+            $table->string('application_status')->default('pending');
             $table->timestamps();
         });
     }

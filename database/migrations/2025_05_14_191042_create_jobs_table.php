@@ -20,6 +20,7 @@ return new class extends Migration
 
             $table->string('job_title');
             $table->text('description');
+            $table->Json('job_full_disc');
             $table->string('location');
             $table->decimal('salary')->nullable();
             $table->string('job_type');
