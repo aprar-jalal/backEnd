@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\JobSeeker;
 
@@ -12,7 +13,7 @@ class JobSeekerFactory extends Factory
     public function definition(): array
     {
         return [
-            'role_id' => $this->faker->unique()->numberBetween(1, 100),
+//            'user_id' => User::factory(),
             'first_name' => $this->faker->firstName,
             'last_name' => $this->faker->lastName,
             'picture' => null,

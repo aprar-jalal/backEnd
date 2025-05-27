@@ -2,10 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class JobSeeker extends Model
 {
+    use HasFactory;
+
+    protected $primaryKey = 'job_seeker_id';
     protected $fillable = [
         'user_id',
         'first_name',

@@ -13,7 +13,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id('user_id');
+
+
+            $table->Id('user_id');
+
+            $table->foreignId('role_id')->constrained('roles')->onDelete('cascade');
             $table->string('email')->unique();
             $table->string('password');
             $table->enum('gender', ['male', 'female']);

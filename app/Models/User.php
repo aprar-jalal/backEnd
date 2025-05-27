@@ -3,12 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class User extends Authenticatable {
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+
+
+class User extends Authenticatable
+{
+    use HasApiTokens, HasFactory, Notifiable;
     protected $primaryKey = 'user_id';
+    protected $fillable = [
 
     protected $fillable = [
         'email',
@@ -19,21 +27,22 @@ class User extends Authenticatable {
         'password_reset_token',
     ];
 
+    public function jobSeeker(): \Illuminate\Database\Eloquent\Relations\HasOne
 
-  function employer()
+    {
+        return $this->hasOne(JobSeeker::class, 'user_id', 'user_id'); //foreign ->jobseeker , local->user
+    }
+
+
+
+    public static function factory(){
+    }
+
+    public function Employer()
     {
         return $this->hasOne(Employer::class);
     }
 
-
-    public static function factory()
-    {
-    }
-
-    public function jobSeeker(): \Illuminate\Database\Eloquent\Relations\HasOne
-    {
-        return $this->hasOne(JobSeeker::class, 'role_id', 'role_id');
-    }
 
     public function favoriteJob() : BelongsToMany{
         return $this->belongsToMany(Job::class, 'user_favorite_jobs' ,'user_id','job_id')
@@ -42,5 +51,20 @@ class User extends Authenticatable {
 
     public Function AppliedJobs() : HasMany {
         return $this->hasMany(UserApplicationJob::class);
+
+    }
+
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function Notification()
+    {
+        return $this->hasMany(Notification::class);
+
     }
 }
+
+

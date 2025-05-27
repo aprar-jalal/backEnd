@@ -5,45 +5,71 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-
-    public function checkout()
+    public function signUp(Request $request)
     {
-        if (Auth::check()) {
-            return response()->json(['status' => true, 'message' => 'User is logged in.']);
-        }
+        $request->validate([
+            'role_id' => 'required|integer',
+            'email' => 'required|email|string|max:255|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+            'gender' => 'required|in:male,female',
+            'phone' => 'required|string|max:15',
+            'location' => 'nullable|string|max:255'
+        ]);
 
-        return response()->json(['status' => false, 'message' => 'No user is logged in.']);
+        $user = User::create([
+            'role_id' => $request['role_id'],
+            'email' => $request['email'],
+            'password' => Hash::make($request['password']),
+            'gender' => $request['gender'],
+            'phone' => $request['phone'],
+            'location' => $request['location'] ?? null,
+        ]);
+
+        return response()->json([
+            'message' => 'User signed up successfully.',
+            'User' => $user
+        ], 201);
     }
 
-
-    public function currentUser()
+    public function logIn(Request $request)
     {
-        if (Auth::check()) {
-            return response()->json(Auth::user());
+        $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+        ]);
+
+        if (!Auth::attempt($request->only('email', 'password'))) {
+            return response()->json([
+                'message' => 'Email or password is wrong.',
+            ], 401);
         }
 
-        return response()->json(['message' => 'No user is currently logged in.'], 401);
+        $user = Auth::user();
+
+        $token = $user->createToken('authToken')->plainTextToken;
+
+        return response()->json([
+            'message' => 'User login successfully.',
+            'User' => $user,
+            'Token' => $token
+        ], 200);
     }
 
-
-    public function manualLogin(Request $request)
+    public function logOut(Request $request)
     {
-        $credentials = $request->only('email', 'password');
+        $user = Auth::user();
 
-        if (Auth::attempt($credentials)) {
-            return response()->json(['message' => 'Login successful.', 'user' => Auth::user()]);
-        }
 
-        return response()->json(['message' => 'Invalid credentials.'], 401);
-    }
+        $user->tokens->each(function ($token) {
+            $token->delete();
+        });
 
-    public function logout()
-    {
-        Auth::logout();
-        return response()->json(['message' => 'Logged out successfully.']);
+        return response()->json([
+            'message' => 'User logged out successfully.'
+        ]);
     }
 }
-
