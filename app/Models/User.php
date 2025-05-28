@@ -11,6 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+
     protected $primaryKey = 'user_id';
     protected $fillable = [
 
@@ -20,7 +21,12 @@ class User extends Authenticatable
         'gender',
         'phone',
         'location',
-        'password_reset_token',
+
+    ];
+
+    protected $hidden = [
+        'password',
+
     ];
 
     public function jobSeeker(): \Illuminate\Database\Eloquent\Relations\HasOne
@@ -61,6 +67,13 @@ class User extends Authenticatable
         return $this->hasMany(Notification::class);
 
     }
-}
 
+    public function sendPasswordResetNotification($token)
+    {
+        $url = 'https://spa.test/reset-password?token=' . $token;
+
+        $this->notify(new ResetPasswordNotification($url));
+    }
+
+}
 
