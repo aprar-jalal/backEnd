@@ -6,6 +6,11 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/admin', [UserController::class, 'adminOnly']);
+    Route::get('/jobseeker', [UserController::class, 'jobSeekerOnly']);
+    Route::get('/employer', [UserController::class, 'employerOnly']);
+});
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -13,8 +18,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('signUp',[UserController::class, 'signUp']);
 Route::post('logIn',[UserController::class, 'logIn']);
 Route::middleware('auth:sanctum')->post('/logOut', [UserController::class, 'logOut']);
-
-
+Route::post('forgotPassword', [UserController::class, 'forgotPassword']);
+Route::post('reset-password', [UserController::class, 'reset']);
 Route::get('/notifications/{userId}','App\Models\NotificationController@index');
 
 
