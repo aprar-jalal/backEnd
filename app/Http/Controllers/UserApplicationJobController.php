@@ -11,19 +11,19 @@ use Illuminate\Support\Facades\Auth;
 class UserApplicationJobController extends Controller
 {
     //start abrar jalal
-    public function store(Request $request): \Illuminate\Http\JsonResponse
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'job_id' => 'required|exists:jobs,job_id',
         ]);
 //        $userID = Auth::id();
-        $userID=1;
+        $userID=102;
         $AppliedBefore = UserApplicationJob::where('user_id', $userID)
             ->where('job_id', $validated['job_id'])
             ->first();
 
         if ($AppliedBefore) {
-            return response()->json(['message' => 'This job was already applied for.'], 409);
+            return response()->json(['message' => 'This job was already applied before.'], 409);
         }
 
         $applicationProcess = UserApplicationJob::create([

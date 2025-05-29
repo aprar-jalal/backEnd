@@ -16,7 +16,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     protected $primaryKey = 'user_id';
-    protected $fillable = [
+
 
     protected $fillable = [
         'email',
@@ -44,7 +44,7 @@ class User extends Authenticatable
     }
 
 
-    public function favoriteJob() : BelongsToMany{
+    public function favoriteJobs() : BelongsToMany{
         return $this->belongsToMany(Job::class, 'user_favorite_jobs' ,'user_id','job_id')
             ->using(UserFavoriteJobs::class);
     }
