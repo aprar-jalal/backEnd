@@ -3,6 +3,7 @@
 
 
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\UserApplicationJobController;
 use App\Http\Controllers\UserFavoriteJobsController;
 use App\Models\UserApplicationJob;
 use App\Http\Controllers\JobSeekerController;
@@ -21,14 +22,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 //aprar
-Route::post('user/{user_id}/job',[UserFavoriteJobsController::class,'store']);
-Route::delete('user/{user_id}/job',[UserFavoriteJobsController::class,'destroy']);
+Route::post('user/{user_id}/Favorite',[UserFavoriteJobsController::class,'store']);
+Route::delete('user/{user_id}/Favorite',[UserFavoriteJobsController::class,'destroy']);
+Route::get('user/{user_id}',[UserFavoriteJobsController::class,'index']);
 
-Route::post('user/{user_id}/job',[UserApplicationJob::class,'store']);
+Route::post('user/applied',[UserApplicationJobController::class,'store']);
 
 Route::get('/allJobs',[JobController::class,'getAllJobs']);
 
 Route::get('/search', [JobController::class, 'search']);
+Route::get('/jobDetails/{job_id}', [JobController::class, 'getJobByID']);
 
 //end
 Route::post('/login', [UserController::class, 'manualLogin']);
