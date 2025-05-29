@@ -2,31 +2,29 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-
     protected $primaryKey = 'user_id';
 
- protected $fillable = [
-        'role_id',
+
+    protected $fillable = [
         'email',
         'password',
         'gender',
         'phone',
         'location',
-
-    ];
-
-    protected $hidden = [
-        'password',
-
+        'password_reset_token',
     ];
 
     public function jobSeeker(): \Illuminate\Database\Eloquent\Relations\HasOne
@@ -36,18 +34,22 @@ class User extends Authenticatable
     }
 
 
+
+    public static function factory(){
+    }
+
     public function Employer()
     {
         return $this->hasOne(Employer::class);
     }
 
 
- public function favoriteJobs() : BelongsToMany{
+    public function favoriteJobs() : BelongsToMany{
         return $this->belongsToMany(Job::class, 'user_favorite_jobs' ,'user_id','job_id')
             ->using(UserFavoriteJobs::class);
     }
 
-   public Function AppliedJobs() : HasMany {
+    public Function AppliedJobs() : HasMany {
         return $this->hasMany(UserApplicationJob::class);
 
     }
@@ -63,13 +65,6 @@ class User extends Authenticatable
         return $this->hasMany(Notification::class);
 
     }
-
-    public function sendPasswordResetNotification($token)
-    {
-        $url = 'https://spa.test/reset-password?token=' . $token;
-
-        $this->notify(new ResetPasswordNotification($url));
-    }
-
 }
+
 
