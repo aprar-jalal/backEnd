@@ -13,7 +13,7 @@ class JobSeekerFactory extends Factory
     public function definition(): array
     {
         return [
-//            'user_id' => User::factory(),
+           'user_id' => User::factory(),
             'first_name' => $this->faker->firstName,
             'last_name' => $this->faker->lastName,
             'picture' => null,

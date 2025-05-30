@@ -9,18 +9,19 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
 
+
             $table->Id('user_id');
-            $table->integer('role_id');
 
-
+            $table->foreignId('role_id')->constrained('roles')->onDelete('cascade');
             $table->string('email')->unique();
             $table->string('password');
             $table->enum('gender', ['male', 'female']);
-            $table->string('password_reset_token')->nullable();
+
             $table->string('phone');
             $table->string('location')->nullable();
             $table->timestamps();
