@@ -12,16 +12,14 @@ use Illuminate\Notifications\Notifiable;
 class Notification extends Model
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable,SoftDeletes;
+    use HasFactory, Notifiable;
 
     protected $fillable = [
         'notificationId',
         'from',
         'message',
         'isOpened',
-        'notificationDate',
         'user_id',
-        'deleted_at',
     ];
 public function User (){
     return $this->belongsTo(User::class);
