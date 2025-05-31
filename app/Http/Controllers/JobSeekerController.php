@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use App\Models\UserApplicationJob;
 
 class JobSeekerController extends Controller
 {
@@ -43,10 +44,20 @@ class JobSeekerController extends Controller
             'degree' => 'nullable|string',
             'years_of_experience' => 'nullable|integer',
             'gender' => 'nullable|string',
+            'currentPassword' => 'nullable|string',
+            'newPassword' => 'nullable|string|min:6',
         ]);
 
-        $userData = array_filter($request->only('phone', 'location', 'gender'), fn($value) => !is_null($value) && $value !== '');
+        if (!empty($request->currentPassword) && !empty($request->newPassword)) {
+            if (!Hash::check($request->currentPassword, $user->password)) {
+                return response()->json(['message' => 'Current password is incorrect'], 400);
+            }
 
+            $user->password = Hash::make($request->newPassword);
+            $user->save();
+        }
+
+        $userData = array_filter($request->only('phone', 'location', 'gender'), fn($value) => !is_null($value) && $value !== '');
         if (!empty($userData)) {
             $user->update($userData);
         }
@@ -56,12 +67,12 @@ class JobSeekerController extends Controller
         } else {
             JobSeeker::create(array_merge($data, ['user_id' => $user->id]));
         }
-
         return response()->json(['message' => 'Profile updated successfully']);
     }
 
     public function getAppliedJobs($user_id)
     {
+
         $user = User::find($user_id);
         if (!$user) {
             return response()->json(['message' => 'User not found'], 404);
@@ -71,6 +82,21 @@ class JobSeekerController extends Controller
 
         return response()->json($appliedJobs);
     }
+    public function destroy($user_id, $job_id)
+    {
+        $application = UserApplicationJob::where('user_id', $user_id)
+            ->where('job_id', $job_id)
+            ->first();
+
+        if (!$application) {
+            return response()->json(['message' => 'Application not found'], 404);
+        }
+
+        $application->delete();
+
+        return response()->json(['message' => 'Application deleted successfully'], 200);
+    }
+
 
     public function getFavoriteJobs($user_id)
     {
@@ -134,7 +160,6 @@ class JobSeekerController extends Controller
             $jobSeeker->picture = $path;
             $jobSeeker->save();
 
-            // هنا أرجع المسار النسبي فقط بدون Storage::url
             return response()->json(['message' => 'Profile picture updated', 'path' => $path]);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed to upload profile picture'], 500);
@@ -163,7 +188,6 @@ class JobSeekerController extends Controller
             $jobSeeker->background_image = $path;
             $jobSeeker->save();
 
-            // نفس الشيء هنا، المسار النسبي فقط
             return response()->json(['message' => 'Background image uploaded successfully', 'path' => $path]);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Failed to upload background image'], 500);
