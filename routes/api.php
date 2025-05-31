@@ -62,7 +62,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/jobseeker/upload-background-picture', [JobSeekerController::class, 'uploadBackgroundPicture']);
     Route::post('/jobseeker/change-password', [JobSeekerController::class, 'changePassword']);
 });
+
 */
+
+
+
 
 
 Route::get('/test/jobseeker/profile/{user_id}', [JobSeekerController::class, 'getMyProfile']);
@@ -73,6 +77,7 @@ Route::post('/test/jobseeker/upload-resume/{user_id}', [JobSeekerController::cla
 Route::post('/test/jobseeker/upload-profile-picture/{user_id}', [JobSeekerController::class, 'uploadProfilePicture']);
 Route::post('/test/jobseeker/upload-background-picture/{user_id}', [JobSeekerController::class, 'uploadBackgroundPicture']);
 Route::post('/test/jobseeker/change-password/{user_id}', [JobSeekerController::class, 'changePassword']);
+
 
 
 Route::get('/notifications/{id}',[NotificationController::class,'byUserId']);
