@@ -50,7 +50,7 @@ class User extends Authenticatable
     }
 
     public Function AppliedJobs() : HasMany {
-        return $this->hasMany(UserApplicationJob::class);
+        return $this->hasMany(UserApplicationJob::class, 'user_id', 'user_id');
 
     }
 

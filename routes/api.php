@@ -2,6 +2,7 @@
 
 
 
+use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\UserApplicationJobController;
 use App\Http\Controllers\UserFavoriteJobsController;
@@ -49,7 +50,7 @@ Route::post('forgotPassword', [UserController::class, 'forgotPassword']);
 Route::post('reset-password', [UserController::class, 'reset']);
 Route::get('/notifications/{userId}','App\Models\NotificationController@index');
 
-
+/*
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/jobseeker/profile', [JobSeekerController::class, 'getMyProfile']);
     Route::post('/jobseeker/profile', [JobSeekerController::class, 'updateProfile']);
@@ -60,5 +61,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/jobseeker/upload-background-picture', [JobSeekerController::class, 'uploadBackgroundPicture']);
     Route::post('/jobseeker/change-password', [JobSeekerController::class, 'changePassword']);
 });
+*/
 
-
+Route::get('/test/jobseeker/profile/{user_id}', [JobSeekerController::class, 'getMyProfile']);
+Route::put('/test/jobseeker/profile/{user_id}', [JobSeekerController::class, 'updateProfile']);
+Route::get('/test/jobseeker/applied-jobs/{user_id}', [JobSeekerController::class, 'getAppliedJobs']);
+Route::get('/test/jobseeker/favorite-jobs/{user_id}', [JobSeekerController::class, 'getFavoriteJobs']);
+Route::post('/test/jobseeker/upload-resume/{user_id}', [JobSeekerController::class, 'uploadResume']);
+Route::post('/test/jobseeker/upload-profile-picture/{user_id}', [JobSeekerController::class, 'uploadProfilePicture']);
+Route::post('/test/jobseeker/upload-background-picture/{user_id}', [JobSeekerController::class, 'uploadBackgroundPicture']);
+Route::post('/test/jobseeker/change-password/{user_id}', [JobSeekerController::class, 'changePassword']);
