@@ -38,6 +38,8 @@ class JobSeekerController extends Controller
             'major' => 'nullable|string',
             'degree' => 'nullable|string',
             'years_of_experience' => 'nullable|integer',
+            'gender' => 'required|in:male,female',
+
         ]);
 
         if (isset($data['phone']) || isset($data['location'])) {

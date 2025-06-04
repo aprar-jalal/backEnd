@@ -22,6 +22,8 @@ class JobSeeker extends Model
         'skills',
         'degree',
         'years_of_experience',
+        'gender',
+
     ];
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo

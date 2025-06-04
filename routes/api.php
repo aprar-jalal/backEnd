@@ -11,6 +11,25 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
 
+
+Route::post('/sign-up', [UserController::class, 'signUp']);
+Route::post('/log-in', [UserController::class, 'logIn']);
+Route::post('/forgot-password', [UserController::class, 'forgotPassword']);
+Route::post('/reset-password', [UserController::class, 'reset']);
+
+
+
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/log-out', [UserController::class, 'logOut']);
+
+    Route::get('/admin', [UserController::class, 'adminOnly']);
+    Route::get('/job-seeker', [UserController::class, 'jobSeekerOnly']);
+    Route::get('/employer', [UserController::class, 'employerOnly']); });
+
+
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin', [UserController::class, 'adminOnly']);
     Route::get('/jobseeker', [UserController::class, 'jobSeekerOnly']);
@@ -31,19 +50,12 @@ Route::get('/allJobs',[JobController::class,'getAllJobs']);
 Route::get('/search', [JobController::class, 'search']);
 
 //end
-Route::post('/login', [UserController::class, 'manualLogin']);
-Route::get('/check-auth', [UserController::class, 'checkout']);
-Route::get('/current-user', [UserController::class, 'currentUser']);
-Route::post('/logout', [UserController::class, 'logout']);
 
 
 
 
-Route::post('signUp',[UserController::class, 'signUp']);
-Route::post('logIn',[UserController::class, 'logIn']);
-Route::middleware('auth:sanctum')->post('/logOut', [UserController::class, 'logOut']);
-Route::post('forgotPassword', [UserController::class, 'forgotPassword']);
-Route::post('reset-password', [UserController::class, 'reset']);
+
+
 Route::get('/notifications/{userId}','App\Models\NotificationController@index');
 
 
