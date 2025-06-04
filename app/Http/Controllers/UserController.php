@@ -4,109 +4,124 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Validation\Rules\Password as RulesPassword;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-
+use App\Models\User;
+use Illuminate\Validation\Rules\Password as RulesPassword;
+use App\Models\Employer;
+use App\Models\JobSeeker;
 class UserController extends Controller
 {
+
     public function signUp(Request $request)
     {
-        $request->validate([
-            'role_id' => 'required|integer',
-            'email' => 'required|email|string|max:255|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-            'gender' => 'required|in:male,female',
-            'phone' => 'required|string|max:15',
-            'location' => 'nullable|string|max:255'
+        $validated = $request->validate([
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|confirmed|min:8',
+            'phone' => 'required',
+            'location' => 'required',
+            'role_id' => 'required|in:2,3',
+
+            // Job seeker fields
+            'first_name' => 'required_if:role_id,2|string',
+            'last_name' => 'required_if:role_id,2|string',
+            'major' => 'required_if:role_id,2|string',
+            'degree' => 'required_if:role_id,2|string',
+            'years_of_experience' => 'required_if:role_id,2|integer',
+            'gender' => 'required_if:role_id,2|in:male,female',
+
+            // Employer fields
+            'company_name' => 'nullable|string',
+            'industry' => 'nullable|string',
         ]);
 
         $user = User::create([
-            'role_id' => $request['role_id'],
-            'email' => $request['email'],
-            'password' => Hash::make($request['password']),
-            'gender' => $request['gender'],
-            'phone' => $request['phone'],
-            'location' => $request['location'] ?? null,
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+            'phone' => $validated['phone'],
+            'location' => $validated['location'],
+            'role_id' => $validated['role_id'],
         ]);
 
+        if ($user->role_id == 3) {
+            Employer::create([
+                'user_id' => $user->user_id,
+                'company_name' => $validated['company_name'] ?? '',
+                'industry' => $validated['industry'] ?? '',
+            ]);
+        }
+
+        if ($user->role_id == 2) {
+            JobSeeker::create([
+                'user_id' => $user->id,
+                'first_name' => $validated['first_name'],
+                'last_name' => $validated['last_name'],
+                'major' => $validated['major'],
+                'degree' => $validated['degree'],
+                'years_of_experience' => $validated['years_of_experience'],
+                'gender' => $validated['gender'],
+            ]);
+        }
+
         return response()->json([
-            'message' => 'User signed up successfully.',
-            'User' => $user
+            'message' => 'User registered successfully',
+            'user' => $user
         ], 201);
     }
 
     public function logIn(Request $request)
     {
-        $request->validate([
-            'email' => 'required|string|email',
+        $credentials = $request->validate([
+            'email' => 'required|email',
             'password' => 'required|string',
         ]);
 
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        if (!Auth::attempt($credentials)) {
             return response()->json([
-                'message' => 'Email or password is wrong.',
+                'message' => 'Invalid credentials.'
             ], 401);
         }
 
         $user = Auth::user();
-
         $token = $user->createToken('authToken')->plainTextToken;
 
         return response()->json([
-            'message' => 'User login successfully.',
-            'User' => $user,
-            'Token' => $token
-        ], 200);
+            'message' => 'Login successful.',
+            'user' => $user,
+            'token' => $token
+        ]);
     }
 
     public function logOut(Request $request)
     {
-        $user = Auth::user();
-
-
-        $user->tokens->each(function ($token) {
-            $token->delete();
-        });
+        $user = $request->user();
+        $user->currentAccessToken()->delete();
 
         return response()->json([
-            'message' => 'User logged out successfully.'
+            'message' => 'Logged out successfully.'
         ]);
     }
-
 
     public function forgotPassword(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'email' => 'required|email'
         ]);
 
-        $user = User::where('email', $request->email)->first();
-
-        if (!$user) {
-            throw ValidationException::withMessages([
-                'email' => ['Email address not found.'],
-            ]);
-        }
-
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        $status = Password::sendResetLink($request->only('email'));
 
         if ($status === Password::RESET_LINK_SENT) {
-            return response()->json([
-                'message' => 'Password reset link sent successfully.'
-            ], 200);
+            return response()->json(['message' => 'Password reset link sent.']);
         }
 
         throw ValidationException::withMessages([
-            'email' => [trans($status)],
+            'email' => [__($status)],
         ]);
     }
+
 
     public function reset(Request $request)
     {
@@ -124,53 +139,40 @@ class UserController extends Controller
                     'remember_token' => Str::random(60),
                 ])->save();
 
-                $user->tokens()->delete();
+                $user->tokens()->delete(); // Revoke old tokens
                 event(new PasswordReset($user));
             }
         );
 
-        if ($status === Password::PASSWORD_RESET) {
-            return response()->json([
-                'message' => 'Password reset successfully.'
-            ], 200);
-        }
-
-        return response()->json([
-            'message' => __($status)
-        ], 500);
+        return $status === Password::PASSWORD_RESET
+            ? response()->json(['message' => 'Password reset successfully.'])
+            : response()->json(['message' => __($status)], 422);
     }
 
 
     public function adminOnly(Request $request)
     {
-        $user = Auth::user();
-
-        if (!$user || $user->role_id != 1) {
-            return response()->json(['message' => 'Unauthorized. Admin only.'], 403);
-        }
-
-        return response()->json(['message' => 'Welcome, Admin!']);
+        return $this->checkRole($request, 1, 'Admin');
     }
 
     public function jobSeekerOnly(Request $request)
     {
-        $user = Auth::user();
-
-        if (!$user || $user->role_id != 2) {
-            return response()->json(['message' => 'Unauthorized. Job Seeker only.'], 403);
-        }
-
-        return response()->json(['message' => 'Welcome, Job Seeker!']);
+        return $this->checkRole($request, 2, 'Job Seeker');
     }
 
     public function employerOnly(Request $request)
     {
-        $user = Auth::user();
+        return $this->checkRole($request, 3, 'Employer');
+    }
 
-        if (!$user || $user->role_id != 3) {
-            return response()->json(['message' => 'Unauthorized. Employer only.'], 403);
+    private function checkRole(Request $request, int $roleId, string $roleName)
+    {
+        $user = $request->user();
+
+        if ($user->role_id !== $roleId) {
+            return response()->json(['message' => "Unauthorized. $roleName only."], 403);
         }
 
-        return response()->json(['message' => 'Welcome, Employer!']);
+        return response()->json(['message' => "Welcome, $roleName!"]);
     }
 }

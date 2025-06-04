@@ -10,6 +10,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\ResetPassword as ResetPasswordNotification;
+
+
 
 
 class User extends Authenticatable
@@ -21,7 +24,7 @@ class User extends Authenticatable
     protected $fillable = [
         'email',
         'password',
-        'gender',
+
         'phone',
         'location',
         'password_reset_token',
@@ -65,6 +68,15 @@ class User extends Authenticatable
         return $this->hasMany(Notification::class);
 
     }
+
+
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new CustomResetPassword($token));
+    }
+
+
 }
 
 

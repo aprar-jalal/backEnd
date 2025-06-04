@@ -15,7 +15,7 @@ return new class extends Migration
         {
 
 
-            $table->id('employer_id');
+            $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('company_name');
             $table->text('description')->nullable();
@@ -24,6 +24,7 @@ return new class extends Migration
             $table->date('established_date')->nullable();
             $table->string('company_size')->nullable();
             $table->boolean('verified')->default(false);
+
             $table->timestamps();
 
 

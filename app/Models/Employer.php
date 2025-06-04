@@ -21,6 +21,7 @@ class Employer extends Authenticatable
         'established_date',
         'company_size',
         'verified',
+
     ];
 
     function user()

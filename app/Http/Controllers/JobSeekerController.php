@@ -43,9 +43,10 @@ class JobSeekerController extends Controller
             'major' => 'nullable|string',
             'degree' => 'nullable|string',
             'years_of_experience' => 'nullable|integer',
-            'gender' => 'nullable|string',
-            'currentPassword' => 'nullable|string',
-            'newPassword' => 'nullable|string|min:6',
+
+            'gender' => 'required|in:male,female',
+
+
         ]);
 
         if (!empty($request->currentPassword) && !empty($request->newPassword)) {
