@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
@@ -11,25 +14,20 @@ use Illuminate\Notifications\ResetPassword as ResetPasswordNotification;
 
 
 
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-
     protected $primaryKey = 'user_id';
-    protected $fillable = [
 
-        'role_id',
+
+    protected $fillable = [
         'email',
         'password',
 
         'phone',
         'location',
-
-    ];
-
-    protected $hidden = [
-        'password',
-
+        'password_reset_token',
     ];
 
     public function jobSeeker(): \Illuminate\Database\Eloquent\Relations\HasOne
@@ -39,24 +37,24 @@ class User extends Authenticatable
     }
 
 
+
+    public static function factory(){
+    }
+
     public function Employer()
     {
         return $this->hasOne(Employer::class);
     }
 
 
-    public function favoriteJob(): BelongsToMany
-    {
-        return $this->belongsToMany(Job::class, 'user_favorite_jobs', 'job_id ', 'user_id')
+    public function favoriteJobs() : BelongsToMany{
+        return $this->belongsToMany(Job::class, 'user_favorite_jobs' ,'user_id','job_id')
             ->using(UserFavoriteJobs::class);
     }
 
-    public function AppliedJobs(): BelongsToMany
-    {
-        return $this->belongsToMany(Job::class, 'user_application_job', 'job_id ', 'user_id')
-            ->using(UserApplicationJob::class)
-            ->withPivot('applicationStatus')
-            ->withTimestamps();
+    public Function AppliedJobs() : HasMany {
+        return $this->hasMany(UserApplicationJob::class, 'user_id', 'user_id');
+
     }
 
 
@@ -72,10 +70,13 @@ class User extends Authenticatable
     }
 
 
+
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new CustomResetPassword($token));
     }
 
+
 }
+
 

@@ -1,32 +1,37 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Validator;
+use App\Models\User;
 use App\Models\JobSeeker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use App\Models\UserApplicationJob;
 
 class JobSeekerController extends Controller
 {
 
-    public function getMyProfile(): \Illuminate\Http\JsonResponse
+    public function getMyProfile($user_id)
     {
-        $user = Auth::user();                          // بترجعلك اليوزر اللي حالياً مسجل دخول
-        //$user = \App\Models\User::first();
-        $jobSeeker = $user->jobSeeker;
+        $user = User::find($user_id);
+        if (!$user || !$user->jobSeeker) {
+            return response()->json(['message' => 'Job seeker profile not found'], 404);
+        }
 
         return response()->json([
             'user' => $user,
-            'jobSeeker' => $jobSeeker,
+            'jobSeeker' => $user->jobSeeker,
         ]);
     }
 
-    public function updateProfile(Request $request): \Illuminate\Http\JsonResponse
+    public function updateProfile(Request $request, $user_id)
     {
-        $user = Auth::user();
-        //$user = \App\Models\User::first();
+        $user = User::find($user_id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
 
         $data = $request->validate([
             'first_name' => 'nullable|string|max:255',
@@ -38,130 +43,174 @@ class JobSeekerController extends Controller
             'major' => 'nullable|string',
             'degree' => 'nullable|string',
             'years_of_experience' => 'nullable|integer',
+
             'gender' => 'required|in:male,female',
+
 
         ]);
 
-        if (isset($data['phone']) || isset($data['location'])) {
-            $user->update($request->only('phone', 'location'));
+        if (!empty($request->currentPassword) && !empty($request->newPassword)) {
+            if (!Hash::check($request->currentPassword, $user->password)) {
+                return response()->json(['message' => 'Current password is incorrect'], 400);
+            }
+
+            $user->password = Hash::make($request->newPassword);
+            $user->save();
+        }
+
+        $userData = array_filter($request->only('phone', 'location', 'gender'), fn($value) => !is_null($value) && $value !== '');
+        if (!empty($userData)) {
+            $user->update($userData);
         }
 
         if ($user->jobSeeker) {
-            $user->jobSeeker->update($data);
+            $user->jobSeeker->update(array_filter($data, fn($value) => !is_null($value) && $value !== ''));
         } else {
-            JobSeeker::create(array_merge($data, ['user_id' => $user->user_id]));
+            JobSeeker::create(array_merge($data, ['user_id' => $user->id]));
         }
-
         return response()->json(['message' => 'Profile updated successfully']);
     }
 
-    public function getAppliedJobs()
+    public function getAppliedJobs($user_id)
     {
-        $user = Auth::user();
-        //$user = \App\Models\User::first();
 
-        $jobs = $user->AppliedJobs()->withPivot('applicationStatus')->get();
+        $user = User::find($user_id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
 
-        return response()->json($jobs);
+        $appliedJobs = $user->AppliedJobs()->with('job')->get();
+
+        return response()->json($appliedJobs);
+    }
+    public function destroy($user_id, $job_id)
+    {
+        $application = UserApplicationJob::where('user_id', $user_id)
+            ->where('job_id', $job_id)
+            ->first();
+
+        if (!$application) {
+            return response()->json(['message' => 'Application not found'], 404);
+        }
+
+        $application->delete();
+
+        return response()->json(['message' => 'Application deleted successfully'], 200);
     }
 
-    public function getFavoriteJobs()
-    {
-        $user = Auth::user();
-        //$user = \App\Models\User::first();
 
-        $favorites = $user->favoriteJob()->get();
+    public function getFavoriteJobs($user_id)
+    {
+        $user = User::find($user_id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        $favorites = $user->favoriteJobs()->get();
 
         return response()->json($favorites);
     }
 
-    public function uploadResume(Request $request)
+    public function uploadResume(Request $request, $user_id)
     {
         $request->validate([
             'resume' => 'required|file|mimes:pdf,doc,docx|max:2048',
         ]);
-        //$user = \App\Models\User::first();
-        $jobSeeker = Auth::user()->jobSeeker;
-        //$jobSeeker = $user->jobSeeker;
 
-        if (!$jobSeeker) {
+        $user = User::find($user_id);
+        if (!$user || !$user->jobSeeker) {
             return response()->json(['message' => 'Job seeker profile not found'], 404);
         }
 
-        if ($jobSeeker->resume) {
-            Storage::disk('public')->delete($jobSeeker->resume);
+        $jobSeeker = $user->jobSeeker;
+
+        try {
+            if ($jobSeeker->resume) {
+                Storage::disk('public')->delete($jobSeeker->resume);
+            }
+
+            $path = $request->file('resume')->store('resumes', 'public');
+            $jobSeeker->resume = $path;
+            $jobSeeker->save();
+
+            return response()->json(['message' => 'Resume uploaded successfully', 'path' => Storage::url($path)]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to upload resume'], 500);
         }
-
-        $path = $request->file('resume')->store('resumes', 'public');
-        $jobSeeker->resume = $path;
-        $jobSeeker->save();
-
-        return response()->json(['message' => 'Resume uploaded successfully', 'path' => Storage::url($path)]);
     }
 
-    public function uploadProfilePicture(Request $request)
+    public function uploadProfilePicture(Request $request, $user_id)
     {
         $request->validate([
             'picture' => 'required|image|max:2048',
         ]);
-        //$user = \App\Models\User::first();
-         $jobSeeker = Auth::user()->jobSeeker;
-        //$jobSeeker = $user->jobSeeker;
 
-        if (!$jobSeeker) {
+        $user = User::find($user_id);
+        if (!$user || !$user->jobSeeker) {
             return response()->json(['message' => 'Job seeker profile not found'], 404);
         }
 
-        if ($jobSeeker->picture) {
-            Storage::disk('public')->delete($jobSeeker->picture);
+        $jobSeeker = $user->jobSeeker;
+
+        try {
+            if ($jobSeeker->picture) {
+                Storage::disk('public')->delete($jobSeeker->picture);
+            }
+
+            $path = $request->file('picture')->store('pictures', 'public');
+            $jobSeeker->picture = $path;
+            $jobSeeker->save();
+
+            return response()->json(['message' => 'Profile picture updated', 'path' => $path]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to upload profile picture'], 500);
         }
-
-        $path = $request->file('picture')->store('pictures', 'public');
-        $jobSeeker->picture = $path;
-        $jobSeeker->save();
-
-        return response()->json(['message' => 'Profile picture updated', 'path' => Storage::url($path)]);
     }
 
-    public function uploadBackgroundPicture(Request $request)
+    public function uploadBackgroundPicture(Request $request, $user_id)
     {
         $request->validate([
             'background_image' => 'required|image|max:2048',
         ]);
 
-       // $user = \App\Models\User::first();
-        $jobSeeker = Auth::user()->jobSeeker;
-        //$jobSeeker = $user->jobSeeker;
-
-        if (!$jobSeeker) {
+        $user = User::find($user_id);
+        if (!$user || !$user->jobSeeker) {
             return response()->json(['message' => 'Job seeker profile not found'], 404);
         }
 
-        if ($jobSeeker->background_image) {
-            Storage::disk('public')->delete($jobSeeker->background_image);
+        $jobSeeker = $user->jobSeeker;
+
+        try {
+            if ($jobSeeker->background_image) {
+                Storage::disk('public')->delete($jobSeeker->background_image);
+            }
+
+            $path = $request->file('background_image')->store('backgrounds', 'public');
+            $jobSeeker->background_image = $path;
+            $jobSeeker->save();
+
+            return response()->json(['message' => 'Background image uploaded successfully', 'path' => $path]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to upload background image'], 500);
         }
-        $path = $request->file('background_image')->store('backgrounds', 'public');
-
-        $jobSeeker->background_image = $path;
-        $jobSeeker->save();
-
-        return response()->json([
-            'message' => 'Background image uploaded successfully',
-            'path' => Storage::url($path),
-        ]);
     }
 
 
-
-    public function changePassword(Request $request)
+    public function changePassword(Request $request, $user_id)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'current_password' => 'required',
             'new_password' => 'required|min:8|confirmed',
         ]);
 
-        $user = Auth::user();
-        //$user = \App\Models\User::first();
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 400);
+        }
+
+        $user = User::find($user_id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
 
         if (!Hash::check($request->current_password, $user->password)) {
             return response()->json(['message' => 'Current password is incorrect'], 400);
@@ -173,6 +222,7 @@ class JobSeekerController extends Controller
         return response()->json(['message' => 'Password updated successfully']);
     }
 }
+
 
 
 

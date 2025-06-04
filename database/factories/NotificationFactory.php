@@ -19,11 +19,15 @@ class NotificationFactory extends Factory
      */
     public function definition(): array
     {
+        $id = 1;
+        $from = User::where('user_id',$id);
         return [
-            'user_id' => User::inRandomOrder()->first()->role_id ?? User::factory()->create(),
-            'title' => $this->faker->sentence(6),
-            'message' => $this->faker->paragraph,
-            'is_read' => $this->faker->boolean(50), // 50% chance it's read
+            'user_id' => '1' ,
+            'message' => $this->faker->paragraph($nbSentences = 1, $variableNbSentences = true),
+            'from' => $from->get()->first()->email,
+            'isOpened' => $this->faker->boolean(50), // 50% chance it's read
         ];
     }
+
+
 }

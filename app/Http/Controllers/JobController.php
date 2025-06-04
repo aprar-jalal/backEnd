@@ -50,8 +50,7 @@ class JobController extends Controller
     //aprar search
     public function search(Request $request)
     {
-        $item = $request->query('query');//this is the query parameter
-
+        $item = $request->input('query');//to take the value from front end
         $results = DB::table('jobs')
             ->join('employers', 'jobs.employer_id', '=', 'employers.employer_id')
             ->select(
@@ -83,16 +82,44 @@ class JobController extends Controller
             ->select(
                 'jobs.job_id',
                 'jobs.job_title',
-                'jobs.salary',
+                'jobs.location',
+                'jobs.job_type',
+                'jobs.description',
+                'jobs.job_full_disc',
+                'employers.company_name',
+                'employers.logo_url',
+                'availability',
+            )->get();
+
+        if($job->isEmpty()){
+            return response()->json("there is no jobs to get",404);
+        }
+        return response()->json($job,200);
+    }
+
+    public function getJobByID($job_id){
+
+        $job=DB::table('jobs')
+            ->join('employers', 'jobs.employer_id', '=', 'employers.employer_id')
+            ->select(
+                'jobs.job_id',
+                'jobs.job_title',
                 'jobs.location',
                 'jobs.job_type',
                 'jobs.description',
                 'jobs.job_full_disc',
                 'employers.company_name',
                 'employers.logo_url'
-            )->get();
+            )->where('jobs.job_id',$job_id)
+            ->first();
+        //اخلي الاجوب تصير عبارة عن اراي
+        $job = (array) $job;
 
-        if($job->isEmpty()){
+        //ما زبط اظهر الديتيلز غير بهاي الطريقة
+        if (isset($job['job_full_disc'])) {
+            $job['job_full_disc'] = json_decode($job['job_full_disc'], true);
+        }
+        if(!$job){
             return response()->json("there is no jobs to get",404);
         }
         return response()->json($job,200);
