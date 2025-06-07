@@ -10,30 +10,32 @@ use Illuminate\Support\Facades\Auth;
 class UserFavoriteJobsController extends Controller
 {
     //start abrar jalal
-    public function store(Request $request,$user_id)
+    public function store(Request $request)
     {
-      $user= User::findOrFail($user_id);
+        $request->validate([
+            'job_id' => 'required|exists:jobs,job_id'
+        ]);
+        $user=Auth::user();
       $user->favoriteJobs()->syncWithoutDetaching([$request->job_id]);
-      return response()->json(['job is added to favorite list',$user_id,$request->job_id],200);
+      return response()->json(['job is added to favorite list'],200);
     }
-//    public function store($Job_id): \Illuminate\Http\JsonResponse
-//    {
-//        $job= User::findOrFail($Job_id);
-//        Auth::user()->favoriteJob()->syncWithoutDetaching([$Job_id]);
-//        return response()->json(['job is added to favorite list'],200);
-//    }
 
-    public function destroy (Request $request,$user_id)
+    public function destroy (Request $request)
     {
-        $user = User::findOrFail($user_id);
+        $request->validate([
+            'job_id' => 'required|exists:jobs,job_id'
+        ]);
+        $user = Auth::user();
         $user->favoriteJobs()->detach([$request->job_id]);
         return response()->json(['job is removed From Favorite'],204);
     }
 
-    public function index($user_id)
+    public function index()
     {
-     $user=User::with('favoriteJobs')->find($user_id);
-     return response()->json($user->favoriteJobs);
+        /** @var \App\Models\User|null $user**/
+        $user = Auth::user();
+        $favoriteJobs = $user->favoriteJobs;
+     return response()->json($favoriteJobs);
     }
 
     //end

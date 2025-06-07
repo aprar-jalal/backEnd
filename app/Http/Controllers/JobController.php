@@ -56,10 +56,11 @@ class JobController extends Controller
             ->select(
                 'jobs.job_id',
                 'jobs.job_title',
-                'jobs.salary',
+                'jobs.description',
                 'jobs.location',
                 'jobs.job_type',
-                'jobs.description',
+                'availability',
+                'jobs.job_full_disc',
                 'employers.company_name',
                 'employers.logo_url',
             )
