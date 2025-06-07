@@ -24,18 +24,17 @@ class UserController extends Controller
             'phone' => 'required',
             'location' => 'required',
             'role_id' => 'required|in:2,3',
-
-            // Job seeker fields
-            'first_name' => 'required_if:role_id,2|string',
-            'last_name' => 'required_if:role_id,2|string',
-            'major' => 'required_if:role_id,2|string',
-            'degree' => 'required_if:role_id,2|string',
-            'years_of_experience' => 'required_if:role_id,2|integer',
-            'gender' => 'required_if:role_id,2|in:male,female',
-
-            // Employer fields
             'company_name' => 'nullable|string',
             'industry' => 'nullable|string',
+
+
+            'first_name' => 'nullable|string',
+            'last_name' => 'nullable|string',
+            'major' => 'nullable|string',
+            'degree' => 'nullable|string',
+            'years_of_experience' => 'nullable|integer',
+            'gender' => 'nullable|in:male,female',
+
         ]);
 
         $user = User::create([
@@ -43,7 +42,7 @@ class UserController extends Controller
             'password' => Hash::make($validated['password']),
             'phone' => $validated['phone'],
             'location' => $validated['location'],
-            'role_id' => $validated['role_id'],
+            'role_id' => $validated['role_id']
         ]);
 
         if ($user->role_id == 3) {
@@ -52,17 +51,16 @@ class UserController extends Controller
                 'company_name' => $validated['company_name'] ?? '',
                 'industry' => $validated['industry'] ?? '',
             ]);
-        }
-
-        if ($user->role_id == 2) {
+        } elseif ($user->role_id == 2) {
             JobSeeker::create([
-                'user_id' => $user->id,
-                'first_name' => $validated['first_name'],
-                'last_name' => $validated['last_name'],
-                'major' => $validated['major'],
-                'degree' => $validated['degree'],
-                'years_of_experience' => $validated['years_of_experience'],
-                'gender' => $validated['gender'],
+                'user_id' => $user->user_id,
+                'first_name' => $validated['first_name'] ?? '',
+                'last_name' => $validated['last_name'] ?? '',
+                'major' => $validated['major'] ?? '',
+                'degree' => $validated['degree'] ?? '',
+                'years_of_experience' => $validated['years_of_experience'] ?? 0,
+                'gender' => $validated['gender'] ?? null,
+
             ]);
         }
 
