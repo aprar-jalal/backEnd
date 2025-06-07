@@ -25,6 +25,7 @@ return new class extends Migration
             $table->json('skills')->nullable();
             $table->string('degree')->nullable();
             $table->integer('years_of_experience')->default(0);
+            $table->enum('gender', ['male', 'female'])->nullable();
             $table->timestamps();
         });
     }

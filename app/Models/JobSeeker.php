@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class JobSeeker extends Model
 {
     use HasFactory;
+    protected $casts = [
+        'skills' => 'array',
+    ];
 
     protected $primaryKey = 'job_seeker_id';
     protected $fillable = [
@@ -22,6 +25,8 @@ class JobSeeker extends Model
         'skills',
         'degree',
         'years_of_experience',
+        'gender',
+
     ];
 
     public function user(): \Illuminate\Database\Eloquent\Relations\BelongsTo

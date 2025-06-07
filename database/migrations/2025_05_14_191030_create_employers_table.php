@@ -24,6 +24,7 @@ return new class extends Migration
             $table->date('established_date')->nullable();
             $table->string('company_size')->nullable();
             $table->boolean('verified')->default(false);
+
             $table->timestamps();
 
 

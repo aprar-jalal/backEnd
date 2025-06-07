@@ -24,6 +24,7 @@ class EmployerController extends Controller
             'logo_url'=>$request->logo_url,
             'company_size'=>$request->company_size,
             'established_date'=>$request->established_date,
+
         ]);
         return response()->json($employer,201);
     }

@@ -2,32 +2,31 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\ResetPassword as ResetPasswordNotification;
+
+
+
 
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-
     protected $primaryKey = 'user_id';
-
-protected $fillable=[
-        'role_id',
+   protected $fillable = [
         'email',
         'password',
-        'gender',
+        'role_id',
         'phone',
-        'location'
+        'location',
+        'password_reset_token',
     ];
-
-    protected $hidden = [
-        'password',
-
-    ];
+ 
 
     public function jobSeeker(): \Illuminate\Database\Eloquent\Relations\HasOne
 
@@ -36,19 +35,23 @@ protected $fillable=[
     }
 
 
+
+    public static function factory(){
+    }
+
     public function Employer()
     {
         return $this->hasOne(Employer::class);
     }
 
 
- public function favoriteJobs() : BelongsToMany{
+    public function favoriteJobs() : BelongsToMany{
         return $this->belongsToMany(Job::class, 'user_favorite_jobs' ,'user_id','job_id')
             ->using(UserFavoriteJobs::class);
     }
 
-   public Function AppliedJobs() : HasMany {
-        return $this->hasMany(UserApplicationJob::class);
+    public Function AppliedJobs() : HasMany {
+        return $this->hasMany(UserApplicationJob::class, 'user_id', 'user_id');
 
     }
 
@@ -64,12 +67,14 @@ protected $fillable=[
 
     }
 
+
+
     public function sendPasswordResetNotification($token)
     {
-        $url = 'https://spa.test/reset-password?token=' . $token;
-
-        $this->notify(new ResetPasswordNotification($url));
+        $this->notify(new CustomResetPassword($token));
     }
 
+
 }
+
 

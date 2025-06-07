@@ -22,6 +22,6 @@ class UserApplicationJob extends Model
  }
 
  public function job() : BelongsTo {
-     return $this->belongsTo(Job::class);
+     return $this->belongsTo(Job::class, 'job_id', 'job_id');
  }
 }
