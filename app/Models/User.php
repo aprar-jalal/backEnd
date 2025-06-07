@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
@@ -14,14 +15,13 @@ class User extends Authenticatable
 
     protected $primaryKey = 'user_id';
 
-
+protected $fillable=[
         'role_id',
         'email',
         'password',
         'gender',
         'phone',
-        'location',
-
+        'location'
     ];
 
     protected $hidden = [
