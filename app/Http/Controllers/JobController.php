@@ -2,29 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employer;
 use App\Models\Job;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class JobController extends Controller
 {
-
-    function index()
+    function getJobsForEmployer($employer_id)
     {
-        $job = Job::all();
-        return response()->json($job,200);
+        $employer = Employer::with('jobs')->findOrFail($employer_id);
+        return response()->json($employer->jobs, 200);
     }
+
     function store(Request $request)
     {
-        $job = Job::create([
-            'employer_id'=>$request->employer_id,
-            'job_title'=>$request->job_title,
-            'description'=>$request->description,
-            'location'=>$request->location,
-            'salary'=>$request->salary,
-            'job_type'=>$request->job_type,
-            'job_full_disc '=>$request->job_full_disc,
+         $validatedJob = $request->validate([
+            'employer_id' => 'required',
+            'job_title' => 'sometimes|required|string|max:255',
+            'description' => 'sometimes|required|string',
+            'location' => 'sometimes|required|string|max:255',
+            'salary' => 'nullable|numeric|min:0',
+            'job_type' => 'sometimes|required|in:full-time,part-time,contract,internship'
         ]);
+
+        $job = Job::create($validatedJob);
         return response()->json($job,201);
     }
 

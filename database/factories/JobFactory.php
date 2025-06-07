@@ -21,7 +21,8 @@ class JobFactory extends Factory
             'description' => $this->faker->paragraph(),
             'location' => $this->faker->city(),
             'salary' => $this->faker->numberBetween(5000, 20000),
-            'job_type' => $this->faker->randomElement(['Full-time', 'Part-time', 'Hybrid']),
+            'job_type' => $this->faker->randomElement(['full-time', 'part-time', 'contract', 'temporary', 'internship']),
+            'workplace' => $this->faker->randomElement(['Onsite', 'Remote', 'Hybrid']),
         ];
     }
 }

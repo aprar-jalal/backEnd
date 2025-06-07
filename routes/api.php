@@ -58,6 +58,29 @@ Route::get('/jobDetails/{job_id}', [JobController::class, 'getJobByID']);
 
 
 
+Route::get('employers', [EmployerController::class, 'index']);
+Route::post('employers', [EmployerController::class, 'store']);
+Route::put('employers/{id}', [EmployerController::class, 'update']);
+Route::get('employers/{id}', [EmployerController::class, 'show']);
+Route::delete('employers/{id}', [EmployerController::class, 'destroy']);
+
+//Route::get('/employers/{employer_id}/jobs', [JobController::class, 'index']);
+Route::get('/employers/{employer_id}/jobs', [JobController::class, 'getJobsForEmployer']);
+
+Route::post('jobs', [JobController::class, 'store']);
+Route::put('jobs/{id}', [JobController::class, 'update']);
+Route::get('jobs/{id}', [JobController::class, 'show']);
+Route::delete('jobs/{id}', [JobController::class, 'destroy']);
+
+Route::post('user/{user_id}/job',[UserFavoriteJob::class,'store']);
+Route::delete('user/{user_id}/job',[UserFavoriteJob::class,'destroy']);
+
+Route::post('user/{user_id}/job',[UserApplicationJob::class,'store']);
+
+Route::post('/login', [UserController::class, 'manualLogin']);
+Route::get('/check-auth', [UserController::class, 'checkout']);
+Route::get('/current-user', [UserController::class, 'currentUser']);
+Route::post('/logout', [UserController::class, 'logout']);
 
 
 

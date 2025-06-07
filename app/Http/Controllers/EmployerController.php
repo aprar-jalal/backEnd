@@ -16,27 +16,60 @@ class EmployerController extends Controller
     }
     function store(Request $request)
     {
-        $employer = Employer::create([
-            'user_id' => $request->user_id,
-            'company_name'=>$request->company_name,
-            'description'=>$request->description ,
-            'industry'=>$request->industry,
-            'logo_url'=>$request->logo_url,
-            'company_size'=>$request->company_size,
-            'established_date'=>$request->established_date,
-
+        $validated = $request->validate([
+            'user_id' => 'required|integer',
+            'company_name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'industry' => 'nullable|string',
+            'company_size' => 'nullable|string',
+            'established_date' => 'nullable|date',
+            'logo_url' => 'nullable|image|mimes:jpg,jpeg,png,svg|max:2048',
         ]);
-        return response()->json($employer,201);
+
+
+        if ($request->hasFile('logo_url')) {
+            $validated['logo_url'] = $request->file('logo_url')->store('employersLogos', 'public');
+        }
+
+        $employer = Employer::create($validated);
+
+        return response()->json([
+            'message' => "Employer created",
+            'employer' => $employer,
+        ], 201);
+
     }
 
-    function update(Request $request,$id)
+//    function update(Request $request,$id = 1)
+//    {
+//        $employer = Employer::findOrFail($id);
+//        $employer->update(
+//            $request->only('company_name', 'description', 'industry', 'logo_url', 'company_size', 'established_date')
+//        );
+//
+//    }
+
+    public function update(Request $request, $id = 1)
     {
-        $employer = Employer::findOrFail($id);
-        $employer->update(
-            $request->only('company_name', 'description', 'industry', 'logo_url', 'company_size', 'established_date')
-        );
+        $employer = Employer::findOrFail(1);
 
+        if ($request->hasFile('logo_url')) {
+            $file = $request->file('logo_url');
+            $path = $file->store('employersLogos', 'public');
+            $employer->logo_url = $path;
+        }
+
+        $employer->update($request->only(
+            'company_name',
+            'description',
+            'industry',
+            'company_size',
+            'established_date'
+        ));
+
+        return response()->json($employer);
     }
+
 
     function show($id){
         $employer = Employer::findOrFail($id);
