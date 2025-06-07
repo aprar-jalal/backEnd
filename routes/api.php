@@ -53,7 +53,7 @@ Route::get('/notifications/{userId}','App\Models\NotificationController@index');
 
 
 // Asmar
-/*
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/jobseeker/profile', [JobSeekerController::class, 'getMyProfile']);
     Route::post('/jobseeker/profile', [JobSeekerController::class, 'updateProfile']);
@@ -63,26 +63,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/jobseeker/upload-profile-picture', [JobSeekerController::class, 'uploadProfilePicture']);
     Route::post('/jobseeker/upload-background-picture', [JobSeekerController::class, 'uploadBackgroundPicture']);
     Route::post('/jobseeker/change-password', [JobSeekerController::class, 'changePassword']);
-    Route::post('user/Favorite',[UserFavoriteJobsController::class,'store']);
-    Route::delete('user/Favorite',[UserFavoriteJobsController::class,'destroy']);
-    Route::get('user/Favorite',[UserFavoriteJobsController::class,'index']);
+    Route::delete('/jobseeker/applied/{job_id}', [JobSeekerController::class, 'destroy']);
 
-    Route::post('user/applied',[UserApplicationJobController::class,'store']);
 });
-
-*/
-
-
-Route::get('/test/jobseeker/profile/{user_id}', [JobSeekerController::class, 'getMyProfile']);
-Route::put('/test/jobseeker/profile/{user_id}', [JobSeekerController::class, 'updateProfile']);
-Route::get('/test/jobseeker/applied-jobs/{user_id}', [JobSeekerController::class, 'getAppliedJobs']);
-Route::get('/test/jobseeker/favorite-jobs/{user_id}', [JobSeekerController::class, 'getFavoriteJobs']);
-Route::post('/test/jobseeker/upload-resume/{user_id}', [JobSeekerController::class, 'uploadResume']);
-Route::post('/test/jobseeker/upload-profile-picture/{user_id}', [JobSeekerController::class, 'uploadProfilePicture']);
-Route::post('/test/jobseeker/upload-background-picture/{user_id}', [JobSeekerController::class, 'uploadBackgroundPicture']);
-Route::post('/test/jobseeker/change-password/{user_id}', [JobSeekerController::class, 'changePassword']);
-Route::delete('user/{user_id}/applied/{job_id}', [JobSeekerController::class, 'destroy']);
-
 // Asmar End
 
 
