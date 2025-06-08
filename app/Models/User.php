@@ -9,7 +9,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\ResetPassword as ResetPasswordNotification;
 use Laravel\Sanctum\HasApiTokens;
@@ -27,7 +26,7 @@ class User extends Authenticatable
         'location',
         'password_reset_token',
     ];
- 
+
 
     public function jobSeeker(): \Illuminate\Database\Eloquent\Relations\HasOne
 
