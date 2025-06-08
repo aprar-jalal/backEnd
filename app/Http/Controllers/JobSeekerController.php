@@ -7,14 +7,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class JobSeekerController extends Controller
 {
-
     public function getMyProfile(): \Illuminate\Http\JsonResponse
     {
-        $user = Auth::user();                          // بترجعلك اليوزر اللي حالياً مسجل دخول
-        //$user = \App\Models\User::first();
+        $user = Auth::user();
         $jobSeeker = $user->jobSeeker;
 
         return response()->json([
@@ -26,7 +25,6 @@ class JobSeekerController extends Controller
     public function updateProfile(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = Auth::user();
-        //$user = \App\Models\User::first();
 
         $data = $request->validate([
             'first_name' => 'nullable|string|max:255',
@@ -38,15 +36,16 @@ class JobSeekerController extends Controller
             'major' => 'nullable|string',
             'degree' => 'nullable|string',
             'years_of_experience' => 'nullable|integer',
-
+            'gender' => 'nullable|string|max:255',
         ]);
 
         if (isset($data['phone']) || isset($data['location'])) {
-            $user->update($request->only('phone', 'location'));
+            $user->update(array_filter($request->only('phone', 'location'), fn($v) => !is_null($v)));
         }
 
         if ($user->jobSeeker) {
-            $user->jobSeeker->update($data);
+            $filteredData = array_filter($data, fn($v) => !is_null($v));
+            $user->jobSeeker->update($filteredData);
         } else {
             JobSeeker::create(array_merge($data, ['user_id' => $user->user_id]));
         }
@@ -54,24 +53,24 @@ class JobSeekerController extends Controller
         return response()->json(['message' => 'Profile updated successfully']);
     }
 
+
     public function getAppliedJobs()
     {
         $user = Auth::user();
-        //$user = \App\Models\User::first();
-
-        $jobs = $user->AppliedJobs()->withPivot('applicationStatus')->get();
+        $jobs = $user->AppliedJobs()->with('job')->get();
 
         return response()->json($jobs);
     }
 
-    public function getFavoriteJobs()
-    {
-        $user = Auth::user();
-        //$user = \App\Models\User::first();
 
-        $favorites = $user->favoriteJob()->get();
+    public function getFavoriteJobs(Request $request) {
+        $user = $request->user();
 
-        return response()->json($favorites);
+        $favoriteJobs = $user->favoriteJobs()->with('employer')->get();
+
+        return response()->json([
+            'favorite_jobs' => $favoriteJobs,
+        ]);
     }
 
     public function uploadResume(Request $request)
@@ -79,9 +78,8 @@ class JobSeekerController extends Controller
         $request->validate([
             'resume' => 'required|file|mimes:pdf,doc,docx|max:2048',
         ]);
-        //$user = \App\Models\User::first();
+
         $jobSeeker = Auth::user()->jobSeeker;
-        //$jobSeeker = $user->jobSeeker;
 
         if (!$jobSeeker) {
             return response()->json(['message' => 'Job seeker profile not found'], 404);
@@ -95,7 +93,10 @@ class JobSeekerController extends Controller
         $jobSeeker->resume = $path;
         $jobSeeker->save();
 
-        return response()->json(['message' => 'Resume uploaded successfully', 'path' => Storage::url($path)]);
+        return response()->json([
+            'message' => 'Resume uploaded successfully',
+            'path' => Storage::url($path)
+        ]);
     }
 
     public function uploadProfilePicture(Request $request)
@@ -103,9 +104,8 @@ class JobSeekerController extends Controller
         $request->validate([
             'picture' => 'required|image|max:2048',
         ]);
-        //$user = \App\Models\User::first();
-         $jobSeeker = Auth::user()->jobSeeker;
-        //$jobSeeker = $user->jobSeeker;
+
+        $jobSeeker = Auth::user()->jobSeeker;
 
         if (!$jobSeeker) {
             return response()->json(['message' => 'Job seeker profile not found'], 404);
@@ -119,7 +119,10 @@ class JobSeekerController extends Controller
         $jobSeeker->picture = $path;
         $jobSeeker->save();
 
-        return response()->json(['message' => 'Profile picture updated', 'path' => Storage::url($path)]);
+        return response()->json([
+            'message' => 'Profile picture updated',
+            'path' => Storage::url($path)
+        ]);
     }
 
     public function uploadBackgroundPicture(Request $request)
@@ -128,9 +131,7 @@ class JobSeekerController extends Controller
             'background_image' => 'required|image|max:2048',
         ]);
 
-       // $user = \App\Models\User::first();
         $jobSeeker = Auth::user()->jobSeeker;
-        //$jobSeeker = $user->jobSeeker;
 
         if (!$jobSeeker) {
             return response()->json(['message' => 'Job seeker profile not found'], 404);
@@ -139,8 +140,8 @@ class JobSeekerController extends Controller
         if ($jobSeeker->background_image) {
             Storage::disk('public')->delete($jobSeeker->background_image);
         }
-        $path = $request->file('background_image')->store('backgrounds', 'public');
 
+        $path = $request->file('background_image')->store('backgrounds', 'public');
         $jobSeeker->background_image = $path;
         $jobSeeker->save();
 
@@ -150,8 +151,6 @@ class JobSeekerController extends Controller
         ]);
     }
 
-
-
     public function changePassword(Request $request)
     {
         $request->validate([
@@ -160,7 +159,6 @@ class JobSeekerController extends Controller
         ]);
 
         $user = Auth::user();
-        //$user = \App\Models\User::first();
 
         if (!Hash::check($request->current_password, $user->password)) {
             return response()->json(['message' => 'Current password is incorrect'], 400);
@@ -171,7 +169,34 @@ class JobSeekerController extends Controller
 
         return response()->json(['message' => 'Password updated successfully']);
     }
-}
 
+
+    public function destroy($job_id)
+    {
+        $user = Auth::user();
+
+        $appliedJob = $user->AppliedJobs()->where('job_id', $job_id)->first();
+
+        if (!$appliedJob) {
+            return response()->json(['message' => 'Job not found'], 404);
+        }
+
+        $appliedJob->delete();
+        return response()->json(['message' => 'Job removed successfully']);
+    }
+    public function removeFavoriteJob($jobId)
+    {
+        $user = auth()->user();
+        $favoriteJob = $user->favoriteJobs()->where('jobs.job_id', $jobId)->first();
+        if (!$favoriteJob) {
+            return response()->json(['message' => 'Job not found in favorites.'], 404);
+        }
+        $user->favoriteJobs()->detach($jobId);
+
+        return response()->json(['message' => 'Job removed from favorites successfully.']);
+    }
+
+
+}
 
 

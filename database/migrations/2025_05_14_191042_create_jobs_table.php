@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('location');
             $table->decimal('salary')->nullable();
             $table->string('job_type');
+            $table->string('workplace');
             $table->boolean('availability')->default(true);
             $table->timestamps();
 

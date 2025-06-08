@@ -4,49 +4,65 @@ namespace App\Http\Controllers;
 
 use App\Models\Employer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EmployerController extends Controller
 {
-
     function index()
     {
         $employer = Employer::all();
         return response()->json($employer,200);
 
     }
-    function store(Request $request)
+
+    public function update(Request $request)
     {
-        $employer = Employer::create([
-            'user_id' => $request->user_id,
-            'company_name'=>$request->company_name,
-            'description'=>$request->description ,
-            'industry'=>$request->industry,
-            'logo_url'=>$request->logo_url,
-            'company_size'=>$request->company_size,
-            'established_date'=>$request->established_date,
+        $user = Auth::user();
+        $employer = Employer::where('user_id', $user->user_id)->first();
 
-        ]);
-        return response()->json($employer,201);
+        if (!$employer) {
+            return response()->json(['message' => 'Employer not found'], 404);
+        }
+
+        if ($request->hasFile('logo_url')) {
+            $file = $request->file('logo_url');
+            $path = $file->store('employersLogos', 'public');
+            $employer->logo_url = $path;
+        }
+
+        $employer->update($request->only(
+            'company_name',
+            'description',
+            'industry',
+            'company_size',
+            'established_date'
+        ));
+
+        return response()->json($employer);
     }
 
-    function update(Request $request,$id)
-    {
-        $employer = Employer::findOrFail($id);
-        $employer->update(
-            $request->only('company_name', 'description', 'industry', 'logo_url', 'company_size', 'established_date')
-        );
 
+    function show(){
+        $user = Auth::user();
+        $employer = Employer::where('user_id', $user->user_id)->first();
+
+        if (!$employer) {
+            return response()->json(['message' => 'Employer not found'], 404);
+        }
+
+        return response()->json($employer, 200);
     }
 
-    function show($id){
-        $employer = Employer::findOrFail($id);
-        return response()->json($employer,200);
-    }
+    function destroy(){
+        $user = Auth::user();
 
-    function destroy($id){
-        $employer = Employer::findOrFail($id);
+        $employer = Employer::where('user_id', $user->user_id);
+
+        if (!$employer) {
+            return response()->json(['message' => 'Employer not found'], 404);
+        }
+
         $employer->delete();
         return response()->json(null,204);
-
     }
 }
