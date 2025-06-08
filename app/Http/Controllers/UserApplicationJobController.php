@@ -16,8 +16,8 @@ class UserApplicationJobController extends Controller
         $validated = $request->validate([
             'job_id' => 'required|exists:jobs,job_id',
         ]);
-//        $userID = Auth::id();
-        $userID=102;
+        $userID = Auth::id();
+
         $AppliedBefore = UserApplicationJob::where('user_id', $userID)
             ->where('job_id', $validated['job_id'])
             ->first();

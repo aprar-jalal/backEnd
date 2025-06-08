@@ -2,26 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Notifications\ResetPassword as ResetPasswordNotification;
-
-
 
 
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     protected $primaryKey = 'user_id';
-
-
-    protected $fillable = [
+   protected $fillable = [
         'email',
         'password',
         'role_id',
@@ -29,6 +23,7 @@ class User extends Authenticatable
         'location',
         'password_reset_token',
     ];
+
 
     public function jobSeeker(): \Illuminate\Database\Eloquent\Relations\HasOne
 
@@ -71,10 +66,6 @@ class User extends Authenticatable
 
 
 
-    public function sendPasswordResetNotification($token)
-    {
-        $this->notify(new CustomResetPassword($token));
-    }
 
 
 }
