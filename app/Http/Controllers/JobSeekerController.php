@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class JobSeekerController extends Controller
 {
@@ -62,17 +63,14 @@ class JobSeekerController extends Controller
     }
 
 
-    public function getFavoriteJobs()
-    {
-        $userId = Auth::id();
+    public function getFavoriteJobs(Request $request) {
+        $user = $request->user();
 
-        $jobs = DB::table('user_favorite_jobs')
-            ->join('jobs', 'user_favorite_jobs.job_id', '=', 'jobs.job_id')
-            ->where('user_favorite_jobs.user_id', $userId)
-            ->select('jobs.*', 'user_favorite_jobs.job_id') // احرص إنك تجيب job_id عشان الزر يحذفه
-            ->get();
+        $favoriteJobs = $user->favoriteJobs()->with('employer')->get();
 
-        return response()->json($jobs);
+        return response()->json([
+            'favorite_jobs' => $favoriteJobs,
+        ]);
     }
 
     public function uploadResume(Request $request)
@@ -186,6 +184,19 @@ class JobSeekerController extends Controller
         $appliedJob->delete();
         return response()->json(['message' => 'Job removed successfully']);
     }
+    public function removeFavoriteJob($jobId)
+    {
+        $user = auth()->user();
+        $favoriteJob = $user->favoriteJobs()->where('jobs.job_id', $jobId)->first();
+        if (!$favoriteJob) {
+            return response()->json(['message' => 'Job not found in favorites.'], 404);
+        }
+        $user->favoriteJobs()->detach($jobId);
+
+        return response()->json(['message' => 'Job removed from favorites successfully.']);
+    }
+
+
 }
 
 
