@@ -87,12 +87,14 @@ class JobController extends Controller
                 'jobs.job_full_disc',
                 'employers.company_name',
                 'employers.logo_url',
+                'category'
             )
             ->where('jobs.job_title', 'like', "%$item%")
             ->orWhere('jobs.location', 'like', "%$item%")
             ->orWhere('jobs.job_type', 'like', "%$item%")
             ->orWhere('employers.company_name', 'like', "%$item%")
             ->orWhere('jobs.description', 'like', "%$item%")
+            ->orWhere('jobs.category', 'like', "%$item%")
             ->get();
         if($results->all()==[]){
             return response()->json("there is no job with this data",404);
@@ -110,10 +112,10 @@ class JobController extends Controller
                 'jobs.location',
                 'jobs.job_type',
                 'jobs.description',
-                'jobs.job_full_disc',
                 'employers.company_name',
                 'employers.logo_url',
                 'availability',
+
             )->get();
 
         if($job->isEmpty()){
@@ -134,16 +136,12 @@ class JobController extends Controller
                 'jobs.description',
                 'jobs.job_full_disc',
                 'employers.company_name',
-                'employers.logo_url'
+                'employers.logo_url',
+                'jobs.salary',
+                'jobs.workplace'
             )->where('jobs.job_id',$job_id)
             ->first();
-        //اخلي الاجوب تصير عبارة عن اراي
-        $job = (array) $job;
 
-        //ما زبط اظهر الديتيلز غير بهاي الطريقة
-        if (isset($job['job_full_disc'])) {
-            $job['job_full_disc'] = json_decode($job['job_full_disc'], true);
-        }
         if(!$job){
             return response()->json("there is no jobs to get",404);
         }

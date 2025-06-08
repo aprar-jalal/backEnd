@@ -22,6 +22,7 @@ class User extends Authenticatable
         'phone',
         'location',
         'password_reset_token',
+
     ];
 
 
