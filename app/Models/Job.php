@@ -17,9 +17,7 @@ class Job extends Authenticatable
 
 
     protected $primaryKey = 'job_id';
-    protected $casts = [
-        'job_full_disc' => 'array',
-    ];
+
     protected $fillable = [
         'employer_id',
         'job_id',
@@ -30,7 +28,8 @@ class Job extends Authenticatable
         'job_type',
         'availability',
         'job_full_disc',
-        'workplace'
+        'workplace',
+        'category'
     ];
 
 
