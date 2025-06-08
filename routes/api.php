@@ -86,7 +86,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/jobseeker/upload-background-picture', [JobSeekerController::class, 'uploadBackgroundPicture']);
     Route::post('/jobseeker/change-password', [JobSeekerController::class, 'changePassword']);
     Route::delete('/jobseeker/applied/{job_id}', [JobSeekerController::class, 'destroy']);
-
+    Route::delete('/jobseeker/favorite/{job_id}', [JobSeekerController::class, 'removeFavoriteJob']);
 });
 // Asmar End
 
