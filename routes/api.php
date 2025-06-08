@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\UserApplicationJobController;
 use App\Http\Controllers\UserFavoriteJobsController;
-use App\Models\UserApplicationJob;
 use App\Http\Controllers\JobSeekerController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\UserController;
@@ -24,6 +23,13 @@ Route::middleware('auth:sanctum')->post('/logOut', [UserController::class, 'logO
 
 
 
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/log-out', [UserController::class, 'logOut']);
+    Route::get('/admin', [UserController::class, 'adminOnly']);
+    Route::get('/job-seeker', [UserController::class, 'jobSeekerOnly']);
+    Route::get('/employer', [UserController::class, 'employerOnly']); });
 
 
 
@@ -58,10 +64,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 
-Route::post('user/{user_id}/job',[UserFavoriteJob::class,'store']);
-Route::delete('user/{user_id}/job',[UserFavoriteJob::class,'destroy']);
-
-Route::post('user/{user_id}/job',[UserApplicationJob::class,'store']);
 
 Route::post('/login', [UserController::class, 'manualLogin']);
 Route::get('/check-auth', [UserController::class, 'checkout']);
@@ -85,8 +87,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/jobseeker/upload-profile-picture', [JobSeekerController::class, 'uploadProfilePicture']);
     Route::post('/jobseeker/upload-background-picture', [JobSeekerController::class, 'uploadBackgroundPicture']);
     Route::post('/jobseeker/change-password', [JobSeekerController::class, 'changePassword']);
+
+
     Route::delete('/jobseeker/applied/{job_id}', [JobSeekerController::class, 'destroy']);
     Route::delete('/jobseeker/favorite/{job_id}', [JobSeekerController::class, 'removeFavoriteJob']);
+
 });
 // Asmar End
 
