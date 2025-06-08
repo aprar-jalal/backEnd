@@ -5,36 +5,58 @@ namespace App\Http\Controllers;
 use App\Models\Employer;
 use App\Models\Job;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class JobController extends Controller
 {
-    function getJobsForEmployer($employer_id)
+    function getJobsForEmployer()
     {
-        $employer = Employer::with('jobs')->findOrFail($employer_id);
+         $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['message' => 'Unauthenticated'], 401);
+        }
+
+        $employer = Employer::with('jobs')->where('user_id', $user->user_id)->first();
+
+        if (!$employer) {
+            return response()->json(['message' => 'Employer profile not found'], 404);
+        }
+
         return response()->json($employer->jobs, 200);
     }
 
     function store(Request $request)
     {
-         $validatedJob = $request->validate([
-            'employer_id' => 'required',
-            'job_title' => 'sometimes|required|string|max:255',
-            'description' => 'sometimes|required|string',
-            'location' => 'sometimes|required|string|max:255',
+        $user = Auth::user();
+        $employer = Employer::where('user_id', $user->user_id)->first();
+
+        if (!$employer) {
+            return response()->json(['message' => 'Employer not found for authenticated user'], 404);
+        }
+
+        $validatedJob = $request->validate([
+            'job_title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'location' => 'required|string|max:255',
             'salary' => 'nullable|numeric|min:0',
-            'job_type' => 'sometimes|required|in:full-time,part-time,contract,internship'
+            'job_type' => 'required|in:full-time,part-time,contract,internship',
+            'job_full_disc' => 'required|string',
+            'workplace' => 'required|in:onsite, hybrid, remote'
         ]);
 
+        $validatedJob['employer_id'] = $employer->employer_id;
+
         $job = Job::create($validatedJob);
-        return response()->json($job,201);
+        return response()->json($job, 201);
     }
 
     function update(Request $request,$job_id)
     {
         $job = Job::findOrFail($job_id);
         $job->update(
-            $request->only('job_title','description','location','salary','job_type','availability')
+            $request->only('job_title','description','location','salary','job_type','availability', 'workplace')
         );
 
     }

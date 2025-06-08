@@ -30,6 +30,7 @@ class Job extends Authenticatable
         'job_type',
         'availability',
         'job_full_disc',
+        'workplace'
     ];
 
 
