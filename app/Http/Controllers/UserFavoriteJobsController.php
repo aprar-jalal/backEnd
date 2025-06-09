@@ -27,7 +27,7 @@ class UserFavoriteJobsController extends Controller
         ]);
         $user = Auth::user();
         $user->favoriteJobs()->detach([$request->job_id]);
-        return response()->json(['job is removed From Favorite'],204);
+        return response()->json(['job is removed From Favorite'],200);
     }
 
     public function index()

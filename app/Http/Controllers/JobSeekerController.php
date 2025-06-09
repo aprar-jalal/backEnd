@@ -15,11 +15,15 @@ class JobSeekerController extends Controller
         $user = Auth::user();
         $jobSeeker = $user->jobSeeker;
 
+        $resumeUrl = $jobSeeker && $jobSeeker->resume ? asset('storage/' . $jobSeeker->resume) : null;
+
         return response()->json([
             'user' => $user,
             'jobSeeker' => $jobSeeker,
+            'resume_url' => $resumeUrl
         ]);
     }
+
 
     public function updateProfile(Request $request): \Illuminate\Http\JsonResponse
     {
@@ -62,17 +66,14 @@ class JobSeekerController extends Controller
     }
 
 
-    public function getFavoriteJobs()
-    {
-        $userId = Auth::id();
+    public function getFavoriteJobs(Request $request) {
+        $user = $request->user();
 
-        $jobs = DB::table('user_favorite_jobs')
-            ->join('jobs', 'user_favorite_jobs.job_id', '=', 'jobs.job_id')
-            ->where('user_favorite_jobs.user_id', $userId)
-            ->select('jobs.*', 'user_favorite_jobs.job_id') // احرص إنك تجيب job_id عشان الزر يحذفه
-            ->get();
+        $favoriteJobs = $user->favoriteJobs()->with('employer')->get();
 
-        return response()->json($jobs);
+        return response()->json([
+            'favorite_jobs' => $favoriteJobs,
+        ]);
     }
 
     public function uploadResume(Request $request)
@@ -185,6 +186,35 @@ class JobSeekerController extends Controller
 
         $appliedJob->delete();
         return response()->json(['message' => 'Job removed successfully']);
+    }
+    public function removeFavoriteJob($jobId)
+    {
+        $user = auth()->user();
+        $favoriteJob = $user->favoriteJobs()->where('jobs.job_id', $jobId)->first();
+        if (!$favoriteJob) {
+            return response()->json(['message' => 'Job not found in favorites.'], 404);
+        }
+        $user->favoriteJobs()->detach($jobId);
+
+        return response()->json(['message' => 'Job removed from favorites successfully.']);
+    }
+
+    public function deleteResume(Request $request)
+    {
+        $user = auth()->user();
+        $jobSeeker = $user->jobSeeker;
+
+        if (!$jobSeeker || !$jobSeeker->resume) {
+            return response()->json(['message' => 'No resume to delete'], 404);
+        }
+
+        if (Storage::exists($jobSeeker->resume)) {
+            Storage::delete($jobSeeker->resume);
+        }
+        $jobSeeker->resume = null;
+        $jobSeeker->save();
+
+        return response()->json(['message' => 'Resume deleted successfully']);
     }
 }
 
