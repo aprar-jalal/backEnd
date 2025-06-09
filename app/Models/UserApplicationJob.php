@@ -18,10 +18,11 @@ class UserApplicationJob extends Model
     public $timestamps = true;
 
     public function user() : BelongsTo {
-     return $this->belongsTo(User::class);
+     return $this->belongsTo(User::class, 'user_id');
  }
 
  public function job() : BelongsTo {
-     return $this->belongsTo(Job::class, 'job_id', 'job_id');
+     return $this->belongsTo(Job::class, 'job_id');
  }
+
 }

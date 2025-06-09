@@ -19,11 +19,27 @@ class JobFactory extends Factory
             'employer_id' => $this->faker->numberBetween(1, 10),
             'job_title' => $this->faker->jobTitle(),
             'description' => $this->faker->paragraph(),
-            'job_full_disc' => $this->faker->text(200),
             'location' => $this->faker->city(),
             'salary' => $this->faker->numberBetween(5000, 20000),
             'job_type' => $this->faker->randomElement(['full-time', 'part-time', 'contract', 'temporary', 'internship']),
             'workplace' => $this->faker->randomElement(['Onsite', 'Remote', 'Hybrid']),
+            'job_category' => $this->faker->randomElement([
+                'Information Technology',
+                'Engineering',
+                'Marketing',
+                'Accounting and Finance',
+                'Education and Training',
+                'Healthcare',
+                'Customer Service',
+                'Human Resources',
+                'Legal',
+                'Construction',
+                'Sales',
+                'Administration',
+                'Media and Communication',
+                'Design and Creative',
+                'Transportation and Logistics',
+                ]),
         ];
     }
 }

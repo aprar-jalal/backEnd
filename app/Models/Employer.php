@@ -32,4 +32,17 @@ class Employer extends Authenticatable
     {
         return $this->hasMany(Job::class, 'employer_id');
     }
+
+    public function applications()
+    {
+        return $this->hasManyThrough(
+            UserApplicationJob::class,
+            Job::class,
+            'employer_id',
+            'job_id',
+            'employer_id',
+            'job_id'
+        );
+    }
+
 }
