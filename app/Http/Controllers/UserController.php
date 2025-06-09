@@ -76,6 +76,7 @@ class UserController extends Controller
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required|string',
+//            'role_id' => 'required|in:1,2,3',
         ]);
 
         if (!Auth::attempt($credentials)) {
