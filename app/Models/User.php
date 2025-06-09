@@ -21,8 +21,6 @@ class User extends Authenticatable
         'role_id',
         'phone',
         'location',
-        'password_reset_token',
-
     ];
 
 
