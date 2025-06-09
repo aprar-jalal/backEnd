@@ -82,19 +82,21 @@ class JobController extends Controller
                 'jobs.job_title',
                 'jobs.description',
                 'jobs.location',
+                'jobs.salary',
+                'workplace',
                 'jobs.job_type',
                 'availability',
-                'jobs.job_full_disc',
                 'employers.company_name',
                 'employers.logo_url',
-                'category'
+                'job_category'
             )
             ->where('jobs.job_title', 'like', "%$item%")
             ->orWhere('jobs.location', 'like', "%$item%")
             ->orWhere('jobs.job_type', 'like', "%$item%")
             ->orWhere('employers.company_name', 'like', "%$item%")
-            ->orWhere('jobs.description', 'like', "%$item%")
-            ->orWhere('jobs.category', 'like', "%$item%")
+            ->orWhere('jobs.salary', 'like', "%$item%")
+            ->orWhere('jobs.workplace', 'like', "%$item%")
+            ->orWhere('jobs.job_category', 'like', "%$item%")
             ->get();
         if($results->all()==[]){
             return response()->json("there is no job with this data",404);
@@ -111,11 +113,11 @@ class JobController extends Controller
                 'jobs.job_title',
                 'jobs.location',
                 'jobs.job_type',
-                'jobs.description',
                 'employers.company_name',
                 'employers.logo_url',
                 'availability',
-
+                'jobs.salary',
+                'jobs.workplace',
             )->get();
 
         if($job->isEmpty()){
@@ -134,7 +136,6 @@ class JobController extends Controller
                 'jobs.location',
                 'jobs.job_type',
                 'jobs.description',
-                'jobs.job_full_disc',
                 'employers.company_name',
                 'employers.logo_url',
                 'jobs.salary',
