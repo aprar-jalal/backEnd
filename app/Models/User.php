@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Models\Notifications\CustomResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
+
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;

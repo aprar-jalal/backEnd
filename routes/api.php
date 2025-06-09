@@ -75,10 +75,6 @@ Route::post('/logout', [UserController::class, 'logout']);
 
 
 
-
-Route::get('/notifications/{userId}','App\Models\NotificationController@index');
-
-
 // Asmar
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -97,7 +93,10 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 // Asmar End
 
-
+//Hamza
 Route::get('/notifications/{id}',[NotificationController::class,'byUserId']);
 Route::post('/notifications', [NotificationController::class, 'store']);
 Route::get('/notifications/{userId}','App\Models\NotificationController@index');
+Route::get('/notifications/{userId}','App\Models\NotificationController@index');
+
+//End
