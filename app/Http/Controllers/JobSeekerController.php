@@ -16,11 +16,17 @@ class JobSeekerController extends Controller
         $user = Auth::user();
         $jobSeeker = $user->jobSeeker;
 
+        $resumeUrl = $jobSeeker && $jobSeeker->resume
+            ? asset('storage/' . $jobSeeker->resume)
+            : null;
+
         return response()->json([
             'user' => $user,
             'jobSeeker' => $jobSeeker,
+            'resume_url' => $resumeUrl
         ]);
     }
+
 
     public function updateProfile(Request $request): \Illuminate\Http\JsonResponse
     {
