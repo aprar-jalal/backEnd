@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\DB;
 
 class JobSeekerController extends Controller
 {
@@ -16,9 +15,7 @@ class JobSeekerController extends Controller
         $user = Auth::user();
         $jobSeeker = $user->jobSeeker;
 
-        $resumeUrl = $jobSeeker && $jobSeeker->resume
-            ? asset('storage/' . $jobSeeker->resume)
-            : null;
+        $resumeUrl = $jobSeeker && $jobSeeker->resume ? asset('storage/' . $jobSeeker->resume) : null;
 
         return response()->json([
             'user' => $user,
@@ -202,7 +199,23 @@ class JobSeekerController extends Controller
         return response()->json(['message' => 'Job removed from favorites successfully.']);
     }
 
+    public function deleteResume(Request $request)
+    {
+        $user = auth()->user();
+        $jobSeeker = $user->jobSeeker;
 
+        if (!$jobSeeker || !$jobSeeker->resume) {
+            return response()->json(['message' => 'No resume to delete'], 404);
+        }
+
+        if (Storage::exists($jobSeeker->resume)) {
+            Storage::delete($jobSeeker->resume);
+        }
+        $jobSeeker->resume = null;
+        $jobSeeker->save();
+
+        return response()->json(['message' => 'Resume deleted successfully']);
+    }
 }
 
 
