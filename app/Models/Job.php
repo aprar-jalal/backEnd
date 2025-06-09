@@ -27,9 +27,8 @@ class Job extends Authenticatable
         'salary',
         'job_type',
         'availability',
-        'job_full_disc',
         'workplace',
-        'category'
+        'job_category'
     ];
 
 
@@ -38,13 +37,14 @@ class Job extends Authenticatable
         return $this->belongsTo(Employer::class, 'employer_id');
     }
 
+
     public function favoriteBy() : BelongsToMany {
         return $this->belongsToMany(User::class, 'user_favorite_jobs' ,'job_id ','user_id')->
             using(UserFavoriteJobs::class);
     }
 
     public function applications() : HasMany {
-        return $this->hasMany(UserApplicationJob::class);
+        return $this->hasMany(UserApplicationJob::class, 'job_id');
     }
 
 }

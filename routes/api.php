@@ -49,8 +49,13 @@ Route::get('/jobDetails/{job_id}', [JobController::class, 'getJobByID']);
 //end
 
 
+Route::put('jobs/{id}', [JobController::class, 'update']);
+Route::get('jobs/{id}', [JobController::class, 'show']);
+
 Route::middleware('auth:sanctum')->group(function () {
 //mohammad
+    Route::get('applications', [UserApplicationJobController::class, 'displayApplicationsForEmployer']);
+
     Route::get('employers', [EmployerController::class, 'index']);
     Route::put('employer', [EmployerController::class, 'update']);
     Route::get('employer', [EmployerController::class, 'show']);
@@ -58,8 +63,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/jobs', [JobController::class, 'getJobsForEmployer']);
     Route::post('jobs', [JobController::class, 'store']);
-    Route::put('jobs/{id}', [JobController::class, 'update']);
-    Route::get('jobs/{id}', [JobController::class, 'show']);
     Route::delete('jobs/{id}', [JobController::class, 'destroy']);
 
 });

@@ -24,7 +24,7 @@ class JobController extends Controller
             return response()->json(['message' => 'Employer profile not found'], 404);
         }
 
-        return response()->json($employer->jobs, 200);
+        return response()->json($employer->jobs->reverse()->values(), 200);
     }
 
     function store(Request $request)
@@ -42,8 +42,8 @@ class JobController extends Controller
             'location' => 'required|string|max:255',
             'salary' => 'nullable|numeric|min:0',
             'job_type' => 'required|in:full-time,part-time,contract,internship',
-            'job_full_disc' => 'required|string',
-            'workplace' => 'required|in:onsite, hybrid, remote'
+            'workplace' => 'required|in:onsite, hybrid, remote',
+            'job_category'=> 'required|string|max:255',
         ]);
 
         $validatedJob['employer_id'] = $employer->employer_id;
