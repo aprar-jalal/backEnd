@@ -41,8 +41,8 @@ class JobController extends Controller
             'description' => 'required|string',
             'location' => 'required|string|max:255',
             'salary' => 'nullable|numeric|min:0',
-            'job_type' => 'required|in:full-time,part-time,contract,internship',
-            'workplace' => 'required|in:onsite, hybrid, remote',
+            'job_type' => 'required|in:full-time,part-time,contractor,internship',
+            'workplace' => 'required|in:onsite,hybrid,remote',
             'job_category'=> 'required|string|max:255',
         ]);
 
