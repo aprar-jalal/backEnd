@@ -9,7 +9,7 @@ class NotificationController extends Controller
 {
     public function byUserId($id)
     {
-        return Notification::where('user_id',$id)->orderBy('created_at','desc')->get();
+        return Notification::where('user_id',$id)->orderBy('created_at', 'desc')->get();
     }
 
     public function store(Request $request)

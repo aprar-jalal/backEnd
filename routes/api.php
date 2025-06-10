@@ -21,15 +21,6 @@ Route::post('/reset-password', [UserController::class, 'reset']);
 Route::middleware('auth:sanctum')->post('/logOut', [UserController::class, 'logOut']);
 
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/log-out', [UserController::class, 'logOut']);
-    Route::get('/admin', [UserController::class, 'adminOnly']);
-    Route::get('/job-seeker', [UserController::class, 'jobSeekerOnly']);
-    Route::get('/employer', [UserController::class, 'employerOnly']);
-});
-
-
-
 
 //aprar
 Route::middleware('auth:sanctum')->group(function () {
@@ -95,6 +86,4 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::get('/notifications/{id}',[NotificationController::class,'byUserId']);
 Route::post('/notifications', [NotificationController::class, 'store']);
 Route::get('/notifications/{userId}','App\Models\NotificationController@index');
-Route::get('/notifications/{userId}','App\Models\NotificationController@index');
-
 //End

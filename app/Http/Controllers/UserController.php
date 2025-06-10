@@ -94,7 +94,7 @@ class UserController extends Controller
                 'email' => $user->email,
                 'role_id' => $user->role_id,
             ],
-            'token' => $token
+            'authToken' => $token
         ]);
 }
 
