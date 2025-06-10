@@ -56,7 +56,7 @@ class JobController extends Controller
     {
         $job = Job::findOrFail($job_id);
         $job->update(
-            $request->only('job_title','description','location','salary','job_type','availability', 'workplace')
+            $request->only('job_title','description','location','salary','job_type','availability','job_category' ,'workplace')
         );
 
     }
@@ -71,6 +71,8 @@ class JobController extends Controller
         $job->delete();
         return response()->json(null,204);
     }
+
+
     //aprar search
     public function search(Request $request)
     {

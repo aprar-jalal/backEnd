@@ -18,7 +18,7 @@ class JobFactory extends Factory
         return [
             'employer_id' => $this->faker->numberBetween(1, 10),
             'job_title' => $this->faker->jobTitle(),
-            'description' => $this->faker->paragraph(),
+            'description' => $this->faker->paragraph(5),
             'location' => $this->faker->city(),
             'salary' => $this->faker->numberBetween(5000, 20000),
             'job_type' => $this->faker->randomElement(['full-time', 'part-time', 'contract', 'temporary', 'internship']),
