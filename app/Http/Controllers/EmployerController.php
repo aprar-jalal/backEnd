@@ -29,22 +29,38 @@ class EmployerController extends Controller
             'company_name'=> 'sometimes|string|max:255',
             'industry'=> 'sometimes|string|max:255',
             'established_date'=> 'sometimes|date',
-            'company_size'=> 'sometimes|string|max:255',
+            'company_size'=> 'sometimes|string|in:1-10,11-50,51-200,201-500,501-1000,1000+',
             'description'=> 'sometimes|string',
-            'logo_url'=> 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        if ($request->hasFile('logo_url')) {
-            $file = $request->file('logo_url');
-            $path = $file->store('employersLogos', 'public');
-            $employer->logo_url = $path;
-        }
 
         $employer->update($validatedData);
 
         return response()->json(['message' => 'updated successfully', 'employer' => $employer]);
 
     }
+
+    public function updateLogo(Request $request)
+    {
+        $request->validate([
+            'logo_url' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        $user = Auth::user();
+        $employer = Employer::where('user_id', $user->user_id)->first();
+
+        if (!$employer) {
+            return response()->json(['error' => 'Employer not found'], 404);
+        }
+
+        $path = $request->file('logo_url')->store('employerLogos', 'public');
+
+        $employer->logo_url = $path;
+        $employer->save();
+
+        return response()->json(['logo_url' => $path]);
+    }
+
 
 
     function show(){
