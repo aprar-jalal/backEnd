@@ -76,7 +76,6 @@ class UserController extends Controller
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required|string',
-//            'role_id' => 'required|in:1,2,3',
         ]);
 
         if (!Auth::attempt($credentials)) {
@@ -90,10 +89,14 @@ class UserController extends Controller
 
         return response()->json([
             'message' => 'Login successful.',
-            'user' => $user,
+            'user' => [
+                'id' => $user->user_id,
+                'email' => $user->email,
+                'role_id' => $user->role_id,
+            ],
             'token' => $token
         ]);
-    }
+}
 
     public function logOut(Request $request)
     {
