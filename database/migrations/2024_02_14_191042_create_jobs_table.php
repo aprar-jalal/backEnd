@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('job_type');
             $table->boolean('availability')->default(true);
             $table->timestamps();
-
         });
     }
 

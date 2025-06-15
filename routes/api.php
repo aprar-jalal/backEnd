@@ -1,7 +1,9 @@
 <?php
 
 
+use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\EmployerController;
+use App\Http\Controllers\jobApplicationController;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\UserApplicationJobController;
@@ -113,5 +115,10 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::get('/jobs', [AdminController::class, 'jobs']);
     Route::delete('/jobs/{id}', [AdminController::class, 'removeJob']);
     Route::get('/reports', [AdminController::class, 'generateReport']);
+
 });
-// alaa end
+
+
+Route::get('/users/manage', [AdminUserController::class, 'index']);
+Route::post('/users/manage/{user}/approve', [AdminUserController::class, 'approve']);
+Route::post('/users/manage/{user}/reject', [AdminUserController::class, 'reject']);

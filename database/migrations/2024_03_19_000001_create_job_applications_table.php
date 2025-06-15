@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('job_applications', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('job_id')->constrained()->onDelete('cascade');
+            $table->foreignId('job_id')->constrained('jobs')->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->text('cover_letter')->nullable();
             $table->string('resume_url');
@@ -25,4 +25,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('job_applications');
     }
-}; 
+};
