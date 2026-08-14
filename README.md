@@ -1,61 +1,158 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Job Portal API - Laravel PHP Backend with Full MVC Structure
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A robust, scalable RESTful API backend built with **Laravel 12** and **PHP 8.2+** following a complete Model-View-Controller (MVC) architecture. Designed for job search and recruitment platforms, this application powers user authentication, employer company management, job listings, application tracking, saved favorites, and real-time notifications.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Authentication & Authorization**: Secure user registration, login, logout, password reset, and token-based authentication using **Laravel Sanctum**.
+- **Employer Management**: Create and manage employer profiles, company size, industry classification, verification, and logo uploads.
+- **Job Management**: Full CRUD operations for job postings, including advanced job search, filtering, and detailed job view.
+- **Job Seeker Profiles**: Comprehensive candidate profiles supporting resume uploads, profile/background photo customization, and password updates.
+- **Application Tracking System (ATS)**: Job seekers can apply for jobs and manage submitted applications; employers can review applicant profiles and update application statuses.
+- **Favorites & Bookmarks**: Save and manage favorite job postings for quick access.
+- **Real-Time Notifications**: Instant user notifications integrated with **Laravel Reverb** and **Pusher**.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Tech Stack
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+* **Backend**: PHP 8.2+, Laravel 12
+* **Database & ORM**: MySQL / SQLite, Eloquent ORM
+* **Authentication**: Laravel Sanctum (Bearer Tokens)
+* **Real-time WebSockets**: Laravel Reverb, Pusher PHP Server
+* **Asset Bundling & Tooling**: Vite, Composer, NPM
+* **Testing & Quality**: PHPUnit, Laravel Pint
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Project Structure
 
-## Laravel Sponsors
+```text
+Laravel-PHP_backend_with_full-MVC-structure/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/       # API Controllers handling request logic
+│   │   └── Middleware/        # Request filtering & authentication middleware
+│   └── Models/                # Eloquent ORM models (User, Job, Employer, JobSeeker, etc.)
+├── bootstrap/                 # Application bootstrap & middleware configuration
+├── config/                    # System & package configurations
+├── database/
+│   ├── factories/             # Model factories for testing
+│   ├── migrations/            # Database schema migrations
+│   └── seeders/               # Database seeders
+├── public/                    # Entry point (index.php) and public assets
+├── resources/
+│   ├── css/                   # Stylesheets & Tailwind setup
+│   └── js/                    # Client scripts & WebSocket listeners
+├── routes/
+│   ├── api.php                # RESTful API route definitions
+│   ├── channels.php           # Event broadcasting channels
+│   └── web.php                # Web routes
+├── storage/                   # File uploads, logs, and application cache
+└── tests/                     # Automated PHPUnit tests
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## Getting Started
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+Follow these steps to get a local development environment up and running.
 
-## Contributing
+### Prerequisites
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Ensure you have the following installed on your system:
 
-## Code of Conduct
+- **PHP** >= 8.2
+- **Composer** >= 2.x
+- **Node.js** >= 18.x & **NPM**
+- **MySQL** database server
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Installation
 
-## Security Vulnerabilities
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/aprar-jalal/Laravel-PHP_backend_with_full-MVC-structure.git
+   cd Laravel-PHP_backend_with_full-MVC-structure
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+2. **Install PHP dependencies:**
+   ```bash
+   composer install
+   ```
 
-## License
+3. **Install Frontend / Tooling dependencies:**
+   ```bash
+   npm install
+   ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+4. **Copy the Environment File & Generate App Key:**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+5. **Run Database Migrations & Seeders:**
+   ```bash
+   php artisan migrate --seed
+   ```
+
+### Environment Variables
+
+Configure your database connection and broadcasting settings in `.env`:
+
+```env
+APP_NAME="Job Portal Backend"
+APP_ENV=local
+APP_KEY=base64:...
+APP_URL=http://127.0.0.1:8000
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=job_portal_db
+DB_USERNAME=root
+DB_PASSWORD=
+
+BROADCAST_CONNECTION=reverb
+REVERB_APP_ID=your_reverb_app_id
+REVERB_APP_KEY=your_reverb_app_key
+REVERB_APP_SECRET=your_reverb_app_secret
+```
+
+### Run the Application
+
+Start the local development server:
+
+```bash
+php artisan serve
+```
+
+Or run all development services concurrently (Server, Queue, and Vite):
+
+```bash
+composer dev
+```
+
+The API server will be available at `http://127.0.0.1:8000`.
+
+---
+
+## API Integration
+
+The frontend application communicates with this backend over **HTTP/REST** endpoints using JSON payloads. Protected routes require a `Bearer <token>` HTTP header via **Laravel Sanctum**.
+
+## Available Scripts
+
+Here are the primary scripts defined in `composer.json` and `package.json`:
+
+| Command | Description |
+| :--- | :--- |
+| `php artisan serve` | Starts the Laravel development server |
+| `composer dev` | Concurrently runs artisan serve, queue worker, and Vite dev server |
+| `composer test` | Clears configuration cache and executes automated PHPUnit tests |
+| `npm run dev` | Starts Vite asset bundler in watch mode |
+| `npm run build` | Bundles frontend assets for production deployment |
+
+---
